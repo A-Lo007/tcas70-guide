@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ภารกิจ TCAS70 · 3 เป้าหมาย ธรรมศาสตร์ รอบ 3 Admission</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A0D13; --panel:#11161F; --panel-2:#161D29; --panel-3:#1C2533;
+    --line:#232C3B; --line-soft:#1A222F;
+    --red:#FF4D4F; --red-deep:#C7333A; --red-dim:rgba(255,77,79,.14);
+    --gold:#FFC93C; --gold-soft:#F5D77E; --gold-dim:rgba(255,201,60,.12);
+    --green:#4ADE80; --green-dim:rgba(74,222,128,.14);
+    --text:#E7ECF3; --muted:#93A0B4; --muted-line:#5E6A7D;
+    --display:'Chakra Petch',system-ui,sans-serif;
+    --body:'Sarabun',system-ui,sans-serif;
+    --maxw:1080px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink); color:var(--text); font-family:var(--body);
+    line-height:1.65; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+    background-image:
+      radial-gradient(900px 500px at 85% -8%, rgba(255,77,79,.10), transparent 60%),
+      radial-gradient(800px 480px at 8% 4%, rgba(255,201,60,.06), transparent 55%);
+    background-attachment:fixed;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+  h1,h2,h3,h4,.dsp{font-family:var(--display)}
+  a{color:var(--gold);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  header.hud{position:sticky;top:0;z-index:50;background:rgba(10,13,19,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .hud-row{display:flex;align-items:center;gap:14px;height:58px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;letter-spacing:.5px}
+  .brand .dot{width:11px;height:11px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px var(--red-dim);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 4px var(--red-dim)}50%{box-shadow:0 0 0 8px transparent}}
+  .brand small{display:block;font-family:var(--body);font-weight:500;color:var(--muted);font-size:11px;letter-spacing:.3px}
+  nav.hud-nav{margin-left:auto;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+  nav.hud-nav::-webkit-scrollbar{display:none}
+  nav.hud-nav a{color:var(--muted);font-family:var(--display);font-size:12.5px;font-weight:600;padding:7px 11px;border-radius:8px;white-space:nowrap;letter-spacing:.3px}
+  nav.hud-nav a:hover{color:var(--text);background:var(--panel-2);text-decoration:none}
+
+  .hero{padding:64px 0 36px;position:relative}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:2.5px;color:var(--red);text-transform:uppercase}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--red)}
+  .hero h1{font-size:clamp(30px,6.4vw,58px);font-weight:700;line-height:1.05;margin:18px 0 0;letter-spacing:-.5px}
+  .hero h1 .hl{color:var(--gold)}
+  .hero .lede{color:var(--muted);font-size:clamp(15px,2.4vw,18px);max-width:640px;margin-top:18px}
+  .hero .lede b{color:var(--text);font-weight:600}
+  .cdwrap{display:inline-flex;align-items:center;gap:10px;margin-top:26px;background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:12px;padding:12px 18px}
+  .cdwrap .k{font-family:var(--display);font-size:11px;letter-spacing:.6px;color:var(--muted);text-transform:uppercase}
+  .cdwrap .cd{font-family:var(--display);font-weight:700;font-size:24px;color:var(--gold)}
+  .cdwrap .cd small{font-size:12px;color:var(--muted);font-weight:500;margin-left:3px}
+
+  section.mod{padding:46px 0;border-top:1px solid var(--line-soft)}
+  .mod-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:26px}
+  .mod-no{font-family:var(--display);font-weight:700;font-size:14px;color:var(--ink);background:var(--gold);border-radius:8px;padding:4px 9px;letter-spacing:1px;flex:none;margin-top:6px}
+  .mod-head h2{font-size:clamp(22px,4.2vw,32px);font-weight:700;line-height:1.12;letter-spacing:-.3px}
+  .mod-head p{color:var(--muted);margin-top:8px;font-size:15px;max-width:700px}
+
+  /* program cards */
+  .progs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .prog{display:flex;flex-direction:column;background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:0;overflow:hidden;transition:.18s;position:relative}
+  .prog:hover{transform:translateY(-4px);border-color:var(--muted-line);text-decoration:none}
+  .prog .top{height:4px;width:100%}
+  .prog.cs .top{background:linear-gradient(90deg,var(--gold),transparent)}
+  .prog.psy .top{background:linear-gradient(90deg,var(--green),transparent)}
+  .prog.law .top{background:linear-gradient(90deg,var(--red),transparent)}
+  .prog .pad{padding:22px;display:flex;flex-direction:column;height:100%}
+  .prog .fac{font-family:var(--display);font-size:11px;letter-spacing:.6px;color:var(--muted);text-transform:uppercase;font-weight:600}
+  .prog h3{font-size:22px;margin:7px 0 2px;color:var(--text)}
+  .prog.cs h3{color:var(--gold)} .prog.psy h3{color:var(--green)} .prog.law h3{color:var(--red)}
+  .prog .deg{font-size:12.5px;color:var(--muted)}
+  .prog .mini{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+  .prog .mini span{font-family:var(--display);font-size:11.5px;font-weight:600;background:var(--panel-3);border:1px solid var(--line);border-radius:7px;padding:4px 9px;color:#cdd6e3}
+  .prog .why{font-size:13.5px;color:#cdd6e3;border-top:1px dashed var(--line);padding-top:12px;margin-top:2px}
+  .prog .why b{color:var(--text)}
+  .prog .go{margin-top:auto;display:flex;align-items:center;justify-content:space-between;font-family:var(--display);font-weight:700;font-size:14px;padding:13px 16px;border-radius:11px;color:var(--ink);margin-top:18px}
+  .prog.cs .go{background:var(--gold)} .prog.psy .go{background:var(--green)} .prog.law .go{background:var(--red);color:#fff}
+  .prog .go .arr{font-size:18px}
+
+  /* comparison table */
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px;-webkit-overflow-scrolling:touch}
+  table.cmp{width:100%;border-collapse:collapse;font-size:13.5px;min-width:620px}
+  table.cmp th,table.cmp td{text-align:left;padding:13px 15px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.cmp thead th{font-family:var(--display);font-size:13px;letter-spacing:.3px;background:var(--panel-2);position:sticky;top:0}
+  table.cmp thead th.cs{color:var(--gold)} table.cmp thead th.psy{color:var(--green)} table.cmp thead th.law{color:var(--red)}
+  table.cmp tbody tr:last-child td{border-bottom:0}
+  table.cmp td.attr{font-weight:600;color:var(--muted);white-space:nowrap;background:var(--panel)}
+  table.cmp td b{color:var(--text)}
+  table.cmp .hi-g{color:var(--green);font-weight:600}
+  table.cmp .hi-r{color:var(--red);font-weight:600}
+
+  .pin{margin-top:18px;background:var(--gold-dim);border:1px solid rgba(255,201,60,.4);border-radius:12px;padding:15px 17px;display:flex;gap:12px;align-items:flex-start}
+  .pin .ic{flex:none;font-size:20px}
+  .pin b{color:var(--gold)}
+  .pin.green{background:var(--green-dim);border-color:rgba(74,222,128,.4)}
+  .pin.green b{color:var(--green)}
+
+  /* overlap chips */
+  .ov{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .ov .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .ov h4{font-size:15px;margin-bottom:8px}
+  .ov .subj{font-family:var(--display);font-weight:700;color:var(--gold);font-size:15px}
+  .ov p{font-size:13.5px;color:#cdd6e3;margin-top:4px}
+
+  /* timeline */
+  .tl{position:relative;margin-top:6px;padding-left:8px}
+  .tl::before{content:"";position:absolute;left:14px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,var(--gold),var(--red),var(--line))}
+  .tli{position:relative;padding:0 0 20px 44px}
+  .tli .dot{position:absolute;left:6px;top:3px;width:18px;height:18px;border-radius:50%;background:var(--panel);border:2px solid var(--muted-line)}
+  .tli.key .dot{background:var(--red);border-color:var(--red);box-shadow:0 0 0 4px var(--red-dim)}
+  .tli .date{font-family:var(--display);font-weight:700;font-size:13.5px;color:var(--gold)}
+  .tli.key .date{color:var(--red)}
+  .tli .ev{font-size:14.5px;margin-top:2px}
+  .tli .sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+
+  footer{border-top:1px solid var(--line);padding:40px 0 60px;margin-top:24px}
+  .links{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:18px 0}
+  .links a{display:block;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:13px 15px;color:var(--text);font-size:14px;transition:.15s}
+  .links a:hover{border-color:var(--gold);text-decoration:none;background:var(--panel-2)}
+  .links a span{display:block;font-family:var(--display);font-size:11px;color:var(--muted);letter-spacing:.4px}
+  .disclaimer{font-size:12.5px;color:var(--muted-line);border:1px dashed var(--line);border-radius:12px;padding:15px 17px;margin-top:6px}
+  .disclaimer b{color:var(--gold)}
+  .section-note{font-size:13px;color:var(--muted);margin-top:14px}
+
+  @media(max-width:820px){
+    .progs{grid-template-columns:1fr}
+    .ov{grid-template-columns:1fr}
+    nav.hud-nav{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="hud">
+  <div class="wrap hud-row">
+    <div class="brand"><span class="dot"></span>
+      <div>TCAS70 · MISSION HUB<small>เป้าหมายธรรมศาสตร์ รอบ 3 Admission</small></div>
+    </div>
+    <nav class="hud-nav">
+      <a href="#progs">3 คณะ</a>
+      <a href="#compare">ตารางเทียบ</a>
+      <a href="#overlap">วางแผนอ่าน</a>
+      <a href="#timeline">ปฏิทินรวม</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <span class="eyebrow">Mission Control // ภารกิจ DEK70</span>
+    <h1>3 เป้าหมาย <span class="hl">ธรรมศาสตร์</span><br>รอบ 3 Admission · ปีการศึกษา 2570</h1>
+    <p class="lede">ศูนย์รวมคู่มือสอบติดทั้ง 3 คณะที่เล็งไว้ — <b>วิทยาการคอมพิวเตอร์</b>, <b>จิตวิทยา</b> และ <b>นิติศาสตร์</b> เลือกเข้าไปอ่านแต่ละคณะแบบเจาะลึก หรือดูตารางเทียบเพื่อวางแผนจัดอันดับและแบ่งเวลาอ่านให้คุ้มที่สุด</p>
+    <div class="cdwrap">
+      <div class="k">นับถอยหลังสอบ TGAT<br>(ใช้ทั้ง 3 คณะ)</div>
+      <div class="cd"><span id="cd-days">—</span><small>วัน</small></div>
+    </div>
+  </section>
+</div>
+
+<!-- ===== PROGRAM CARDS ===== -->
+<section class="mod" id="progs">
+  <div class="wrap">
+    <div class="mod-head">
+      <div class="mod-no">01</div>
+      <div>
+        <h2>เลือกคณะที่จะเจาะ</h2>
+        <p>แต่ละการ์ดลิงก์ไปคู่มือฉบับเต็มของคณะนั้น — มีสูตรคะแนน เครื่องคำนวณ เจาะสนามสอบ ปฏิทิน และโจทย์ฝึกพร้อมเฉลย</p>
+      </div>
+    </div>
+
+    <div class="progs">
+      <!-- CS -->
+      <a class="prog cs" href="cs.html">
+        <div class="top"></div>
+        <div class="pad">
+          <div class="fac">คณะวิทยาศาสตร์และเทคโนโลยี</div>
+          <h3>วิทยาการคอมพิวเตอร์</h3>
+          <div class="deg">วท.บ. · ศูนย์รังสิต</div>
+          <div class="mini"><span>~50 ที่นั่ง</span><span>คณิต1 = 50%</span><span>ใช้ TPAT3</span></div>
+          <div class="why"><b>ตัวจริงของน้อง</b> — สูตรเดียว เน้น A-Level คณิต 1 หนักครึ่งหนึ่ง + TGAT + TPAT3 กลุ่มสายวิทย์ไม่กำหนด GPAX</div>
+          <div class="go">เข้าดูคู่มือ CS <span class="arr">→</span></div>
+        </div>
+      </a>
+
+      <!-- PSYCHOLOGY -->
+      <a class="prog psy" href="psychology.html">
+        <div class="top"></div>
+        <div class="pad">
+          <div class="fac">คณะศิลปศาสตร์</div>
+          <h3>จิตวิทยา</h3>
+          <div class="deg">วท.บ. · ศูนย์รังสิต</div>
+          <div class="mini"><span>60 ที่นั่ง</span><span>3 รูปแบบ</span><span>แข่ง 64.5:1</span></div>
+          <div class="why">เป็นปริญญา <b>วิทยาศาสตร์</b> สายวิทย์ได้เปรียบ (มีชีวะ+คณิต) มี 3 ทางเข้า แต่ทุกทางบังคับ GPAX 2.75</div>
+          <div class="go">เข้าดูคู่มือจิตวิทยา <span class="arr">→</span></div>
+        </div>
+      </a>
+
+      <!-- LAW -->
+      <a class="prog law" href="law.html">
+        <div class="top"></div>
+        <div class="pad">
+          <div class="fac">คณะนิติศาสตร์</div>
+          <h3>นิติศาสตร์</h3>
+          <div class="deg">น.บ. · ศูนย์รังสิต</div>
+          <div class="mini"><span>370 ที่นั่ง</span><span>TGAT = 50%</span><span>ฮิตสุดใน มธ.</span></div>
+          <div class="why">ที่นั่งเยอะสุด สูตร TGAT 50% + เลือกคณิตเป็นวิชา 20% ได้ (<b>สายวิทย์ได้เปรียบ</b>) ไม่กำหนด GPAX</div>
+          <div class="go">เข้าดูคู่มือนิติ <span class="arr">→</span></div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== COMPARISON ===== -->
+<section class="mod" id="compare">
+  <div class="wrap">
+    <div class="mod-head">
+      <div class="mod-no">02</div>
+      <div>
+        <h2>ตารางเทียบ 3 คณะ</h2>
+        <p>มองภาพรวมพร้อมกันเพื่อตัดสินใจจัดอันดับ (เลื่อนตารางซ้าย-ขวาได้บนมือถือ) — อิงเกณฑ์ TCAS69 ล่าสุด</p>
+      </div>
+    </div>
+
+    <div class="tablewrap">
+      <table class="cmp">
+        <thead>
+          <tr><th>หัวข้อ</th><th class="cs">CS วิทย์ฯ</th><th class="psy">จิตวิทยา</th><th class="law">นิติศาสตร์</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="attr">ปริญญา</td><td>วท.บ.</td><td>วท.บ.</td><td>น.บ.</td></tr>
+          <tr><td class="attr">ที่นั่งรอบ 3</td><td>~50</td><td>60</td><td><b>370</b></td></tr>
+          <tr><td class="attr">สูตรคะแนนหลัก</td><td><b>คณิต1 50%</b><br>+TGAT 35% +TPAT3 15%</td><td><b>3 รูปแบบ</b><br>A-Level5 / TGAT100% / A-Level4</td><td><b>TGAT 50%</b><br>+เลือก 20% +สังคม/ไทย/อังกฤษ</td></tr>
+          <tr><td class="attr">GPAX ขั้นต่ำ</td><td class="hi-g">ไม่กำหนด*</td><td class="hi-r">2.75 ทุกรูปแบบ</td><td class="hi-g">ไม่กำหนด</td></tr>
+          <tr><td class="attr">ความนิยม/แข่งขัน</td><td>สูง</td><td class="hi-r">64.5:1 (โหดสุด)</td><td>9,393 คน (ฮิตสุด)</td></tr>
+          <tr><td class="attr">วิชาที่ต้องทุ่ม</td><td>คณิต 1</td><td>ชีวะ + คณิต 1<br><span class="hi-g">(สายวิทย์ได้เปรียบ)</span></td><td>TGAT + คณิต(เลือก)<br><span class="hi-g">(สายวิทย์ได้เปรียบ)</span></td></tr>
+          <tr><td class="attr">ต้องสอบ TPAT3?</td><td class="hi-r">ต้องใช้</td><td>ไม่ใช้</td><td>ไม่ใช้</td></tr>
+          <tr><td class="attr">คู่มือเต็ม</td><td><a href="cs.html">เปิด CS →</a></td><td><a href="psychology.html">เปิดจิตวิทยา →</a></td><td><a href="law.html">เปิดนิติ →</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="section-note">*CS ไม่กำหนด GPAX เฉพาะกลุ่ม A (สายวิทย์-คณิต) ซึ่งเป็นกลุ่มของน้อง</p>
+  </div>
+</section>
+
+<!-- ===== STUDY OVERLAP ===== -->
+<section class="mod" id="overlap">
+  <div class="wrap">
+    <div class="mod-head">
+      <div class="mod-no">03</div>
+      <div>
+        <h2>วางแผนอ่านให้คุ้ม — วิชาที่ใช้ร่วมกัน</h2>
+        <p>ข่าวดีคือ 3 คณะนี้ใช้วิชาทับซ้อนกันเยอะ ถ้าวางแผนดี อ่านทีเดียวยื่นได้หลายที่ นี่คือวิชาที่ "คุ้มสุด" เพราะใช้ได้หลายคณะ</p>
+      </div>
+    </div>
+
+    <div class="ov">
+      <div class="card">
+        <div class="subj">A-Level คณิต 1</div>
+        <p>ใช้ทั้ง 3 คณะ! — CS (50%), จิตวิทยา รูปแบบ A (20%), นิติ (วิชาเลือก 20%) ถ้าเก็บวิชานี้แน่น คือลงทุนครั้งเดียวคุ้ม 3 ต่อ</p>
+      </div>
+      <div class="card">
+        <div class="subj">TGAT (3 พาร์ต)</div>
+        <p>ใช้ทั้ง 3 คณะ — CS (35%), จิตวิทยา รูปแบบ B (100%), นิติ (50%) เป็นวิชาฟรีค่าสมัครและคืนคะแนนสูงทุกที่ ควรทุ่มแต่เนิ่น ๆ</p>
+      </div>
+      <div class="card">
+        <div class="subj">A-Level สังคม / ไทย / อังกฤษ</div>
+        <p>ใช้ทั้งจิตวิทยา (รูปแบบ A อย่างละ 20%) และนิติ (อย่างละ 10%) — เก็บ 3 วิชานี้ครอบคลุมทั้งสองคณะสายสังคมพร้อมกัน</p>
+      </div>
+      <div class="card">
+        <div class="subj">A-Level ชีววิทยา</div>
+        <p>เฉพาะจิตวิทยา รูปแบบ A (20%) — แต่น้องสายวิทย์เรียนอยู่แล้ว ถือเป็นแต้มต่อที่เด็กสายอื่นไม่มี</p>
+      </div>
+    </div>
+
+    <div class="pin green">
+      <div class="ic">🧠</div>
+      <div style="color:#e7ecf3"><b>แผนรวบยอดสำหรับน้อง:</b> ทุ่ม <b>TGAT + A-Level คณิต 1</b> ให้แน่นก่อน (สองตัวนี้ครอบทั้ง 3 คณะ) แล้วเสริม <b>ชีวะ + สังคม + ไทย + อังกฤษ</b> = ครบทุกวิชาที่ต้องใช้ของทั้งสามเป้าหมาย ยื่นรอบ 3 ได้ทั้ง CS, จิตวิทยา และนิติ ในการเตรียมตัวชุดเดียว</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TIMELINE ===== -->
+<section class="mod" id="timeline">
+  <div class="wrap">
+    <div class="mod-head">
+      <div class="mod-no">04</div>
+      <div>
+        <h2>ปฏิทิน TCAS70 รวม — หมุดสำคัญ</h2>
+        <p>กำหนดการอย่างเป็นทางการจาก ทปอ. (ปีการศึกษา 2570) ใช้ร่วมกันทุกคณะ จุดสีแดงคือวันสอบ/วันสมัครที่ห้ามพลาด</p>
+      </div>
+    </div>
+
+    <div class="tl">
+      <div class="tli"><div class="dot"></div><div class="date">15 ก.ค. 69</div><div class="ev">ลงทะเบียน myTCAS</div></div>
+      <div class="tli"><div class="dot"></div><div class="date">4–10 พ.ย. 69</div><div class="ev">สมัครสอบ TGAT / TPAT2-5</div><div class="sub">CS ต้องเลือก TPAT3 ด้วย • จิตวิทยา/นิติ ใช้แค่ TGAT</div></div>
+      <div class="tli key"><div class="dot"></div><div class="date">30 ม.ค. 70</div><div class="ev">สอบ TGAT (+ TPAT3 สำหรับ CS)</div><div class="sub">TGAT ใช้ทั้ง 3 คณะ — วันนี้สำคัญสุด</div></div>
+      <div class="tli"><div class="dot"></div><div class="date">14–20 ม.ค. 70</div><div class="ev">สมัครสอบ A-Level</div></div>
+      <div class="tli"><div class="dot"></div><div class="date">28 ก.พ. 70</div><div class="ev">ประกาศผล TGAT / TPAT</div></div>
+      <div class="tli key"><div class="dot"></div><div class="date">13 มี.ค. 70</div><div class="ev">A-Level วันแรก</div><div class="sub">ชีววิทยา 08.30 · ภาษาไทย 13.30 · สังคม 15.30 (จิตวิทยา = สอบ 3 วิชา / นิติ = ไทย+สังคม)</div></div>
+      <div class="tli key"><div class="dot"></div><div class="date">14 มี.ค. 70</div><div class="ev">A-Level วันสอง</div><div class="sub">คณิต 1 08.30 · อังกฤษ 11.00 (ใช้ทั้ง 3 คณะ) • คณิต 2 อยู่ 15 มี.ค.</div></div>
+      <div class="tli"><div class="dot"></div><div class="date">20 เม.ย. 70</div><div class="ev">ประกาศผลคะแนน A-Level</div></div>
+      <div class="tli key"><div class="dot"></div><div class="date">7–11 พ.ค. 70</div><div class="ev">รับสมัครรอบ 3 Admission</div><div class="sub">ยื่นได้ 10 อันดับ — วางทั้ง 3 คณะตามลำดับที่อยากได้</div></div>
+      <div class="tli key"><div class="dot"></div><div class="date">22 พ.ค. 70</div><div class="ev">ประกาศผลครั้งที่ 1 + ยืนยันสิทธิ์ 22–23 พ.ค.</div></div>
+      <div class="tli"><div class="dot"></div><div class="date">27 พ.ค. 70</div><div class="ev">ประกาศผลครั้งที่ 2</div></div>
+      <div class="tli"><div class="dot"></div><div class="date">29 พ.ค.–15 มิ.ย. 70</div><div class="ev">รอบ 4 Direct Admission (แผนสำรอง)</div></div>
+    </div>
+
+    <div class="pin">
+      <div class="ic">🎯</div>
+      <div>เคล็ดลับจัดอันดับ 10 ช่อง: วางคณะที่ "อยากได้ที่สุด" ไว้บนสุดเสมอ (ระบบให้สิทธิ์อันดับสูงสุดที่คะแนนถึงก่อน) ไล่ลงมาเป็นตัวสำรองที่เข้าง่ายขึ้น — มี 3 คณะนี้เป็นฐาน แล้วเสริมอันดับสำรองที่ปลอดภัยเพิ่ม</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="eyebrow">Resources // ลิงก์ทางการ</span>
+    <div class="links">
+      <a href="https://www.mytcas.com/" target="_blank" rel="noopener">mytcas.com<span>ระบบสมัคร TCAS + ข่าวทางการ</span></a>
+      <a href="https://www.tuadmissions.in.th/" target="_blank" rel="noopener">งานรับเข้า มหาวิทยาลัยธรรมศาสตร์<span>ระเบียบการฉบับเต็มแต่ละรอบ</span></a>
+      <a href="https://course.mytcas.com/programs/10050209220201A" target="_blank" rel="noopener">โปรแกรม CS บน mytcas<span>เกณฑ์ปีล่าสุด</span></a>
+      <a href="https://course.mytcas.com/programs/10050206113101A" target="_blank" rel="noopener">โปรแกรมจิตวิทยา บน mytcas<span>เกณฑ์ปีล่าสุด</span></a>
+      <a href="https://course.mytcas.com/programs/10050201901001A" target="_blank" rel="noopener">โปรแกรมนิติ บน mytcas<span>เกณฑ์ปีล่าสุด</span></a>
+      <a href="https://www.mytcas.com/blueprint/" target="_blank" rel="noopener">Test Blueprint ทุกวิชา<span>โครงสร้าง + ตัวอย่างข้อสอบทางการ</span></a>
+    </div>
+    <div class="disclaimer">
+      <b>หมายเหตุสำคัญ:</b> สัดส่วนคะแนน คุณสมบัติ และจำนวนรับทั้งหมด อ้างอิงเกณฑ์รอบ 3 Admission ของ <b>TCAS69</b> ส่วนปฏิทินและตารางสอบอ้างอิงกำหนดการ <b>TCAS70</b> อย่างเป็นทางการจาก ทปอ. — เกณฑ์ของ TCAS70 มักประกาศปลายปี 2569 และมักใกล้เคียงเดิม แต่อาจเปลี่ยนแปลงได้ ก่อนสมัครจริงให้ยืนยันตัวเลขล่าสุดจากหน้าโปรแกรมบน mytcas และระเบียบการฉบับเต็มของ มธ. อีกครั้งเสมอ
+    </div>
+  </div>
+</footer>
+
+<script>
+/* COUNTDOWN to TGAT: 30 Jan 2027 13:00 (+07:00) */
+(function(){
+  var target = new Date('2027-01-30T13:00:00+07:00').getTime();
+  function tick(){
+    var d = Math.max(0, Math.ceil((target-Date.now())/86400000));
+    document.getElementById('cd-days').textContent = d.toLocaleString('th-TH');
+  }
+  tick(); setInterval(tick, 3600000);
+})();
+</script>
+</body>
+</html>
