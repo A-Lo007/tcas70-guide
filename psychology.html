@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ภารกิจ TCAS70 · จิตวิทยา ศิลปศาสตร์ มธ. รอบ 3 Admission</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A0D13; --panel:#11161F; --panel-2:#161D29; --panel-3:#1C2533;
+    --line:#232C3B; --line-soft:#1A222F;
+    --red:#FF4D4F; --red-deep:#C7333A; --red-dim:rgba(255,77,79,.14);
+    --gold:#FFC93C; --gold-soft:#F5D77E; --gold-dim:rgba(255,201,60,.12);
+    --green:#4ADE80; --green-dim:rgba(74,222,128,.14);
+    --text:#E7ECF3; --muted:#93A0B4; --muted-2:#62708400;
+    --muted-line:#5E6A7D;
+    --display:'Chakra Petch',system-ui,sans-serif;
+    --body:'Sarabun',system-ui,sans-serif;
+    --maxw:1080px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink); color:var(--text); font-family:var(--body);
+    line-height:1.65; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+    background-image:
+      radial-gradient(900px 500px at 85% -8%, rgba(255,77,79,.10), transparent 60%),
+      radial-gradient(800px 480px at 8% 4%, rgba(255,201,60,.06), transparent 55%);
+    background-attachment:fixed;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+  h1,h2,h3,h4,.dsp{font-family:var(--display)}
+  a{color:var(--gold);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* ---------- HUD NAV ---------- */
+  header.hud{
+    position:sticky;top:0;z-index:50;
+    background:rgba(10,13,19,.82);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .hud-row{display:flex;align-items:center;gap:14px;height:58px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;letter-spacing:.5px}
+  .brand .dot{width:11px;height:11px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px var(--red-dim);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 4px var(--red-dim)}50%{box-shadow:0 0 0 8px transparent}}
+  .brand small{display:block;font-family:var(--body);font-weight:500;color:var(--muted);font-size:11px;letter-spacing:.3px}
+  nav.hud-nav{margin-left:auto;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+  nav.hud-nav::-webkit-scrollbar{display:none}
+  nav.hud-nav a{
+    color:var(--muted);font-family:var(--display);font-size:12.5px;font-weight:600;
+    padding:7px 11px;border-radius:8px;white-space:nowrap;letter-spacing:.3px;
+  }
+  nav.hud-nav a:hover{color:var(--text);background:var(--panel-2);text-decoration:none}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:64px 0 40px;position:relative}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:2.5px;color:var(--red);text-transform:uppercase}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--red)}
+  .hero h1{font-size:clamp(30px,6.4vw,58px);font-weight:700;line-height:1.05;margin:18px 0 0;letter-spacing:-.5px}
+  .hero h1 .hl{color:var(--gold)}
+  .hero .lede{color:var(--muted);font-size:clamp(15px,2.4vw,18px);max-width:640px;margin-top:18px}
+  .hero .lede b{color:var(--text);font-weight:600}
+
+  .statbar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:34px}
+  .stat{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;position:relative;overflow:hidden}
+  .stat::after{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:linear-gradient(90deg,var(--red),transparent)}
+  .stat .k{font-family:var(--display);font-size:11px;letter-spacing:.6px;color:var(--muted);text-transform:uppercase}
+  .stat .v{font-family:var(--display);font-weight:700;font-size:clamp(20px,3.4vw,30px);line-height:1.1;margin-top:6px}
+  .stat .v small{font-size:13px;color:var(--muted);font-weight:500}
+  .stat.gold .v{color:var(--gold)} .stat.gold::after{background:linear-gradient(90deg,var(--gold),transparent)}
+  .stat.red .v{color:var(--red)} .stat.red::after{background:linear-gradient(90deg,var(--red),transparent)}
+  .stat.green .v{color:var(--green)} .stat.green::after{background:linear-gradient(90deg,var(--green),transparent)}
+  .cd{display:flex;gap:6px;align-items:baseline;font-family:var(--display);font-weight:700;font-size:clamp(20px,3.4vw,30px);color:var(--gold)}
+  .cd small{font-size:12px;color:var(--muted);font-weight:500}
+
+  /* ---------- SECTIONS ---------- */
+  section.mod{padding:52px 0;border-top:1px solid var(--line-soft)}
+  .mod-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:30px}
+  .mod-no{font-family:var(--display);font-weight:700;font-size:14px;color:var(--ink);background:var(--gold);border-radius:8px;padding:4px 9px;letter-spacing:1px;flex:none;margin-top:6px}
+  .mod-head h2{font-size:clamp(22px,4.2vw,34px);font-weight:700;line-height:1.12;letter-spacing:-.3px}
+  .mod-head p{color:var(--muted);margin-top:8px;font-size:15px;max-width:700px}
+
+  /* cards */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+
+  /* weight bars */
+  .formula{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:24px}
+  .wrow{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px dashed var(--line)}
+  .wrow:last-child{border-bottom:0}
+  .wlabel{flex:none;width:135px}
+  .wlabel .t{font-weight:600;font-size:14.5px}
+  .wlabel .s{font-size:11.5px;color:var(--muted)}
+  .wtrack{flex:1;height:26px;background:var(--panel-3);border-radius:7px;overflow:hidden;position:relative;border:1px solid var(--line)}
+  .wfill{height:100%;border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:9px;font-family:var(--display);font-weight:700;font-size:13px;color:var(--ink);min-width:34px;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+  .wfill.red{background:linear-gradient(90deg,var(--red-deep),var(--red))}
+  .wfill.gold{background:linear-gradient(90deg,#E0A800,var(--gold));color:#211800}
+  .wfill.green{background:linear-gradient(90deg,#2e9e57,var(--green));color:#06270f}
+  .wfill.dim{background:linear-gradient(90deg,#3A4658,#56657c);color:#fff}
+  .pin-insight{margin-top:18px;background:var(--red-dim);border:1px solid rgba(255,77,79,.35);border-radius:12px;padding:15px 17px;display:flex;gap:12px;align-items:flex-start}
+  .pin-insight .ic{flex:none;font-size:20px}
+  .pin-insight b{color:var(--gold)}
+
+  /* route cards */
+  .route{position:relative;overflow:hidden;margin-bottom:16px}
+  .route.best{border-color:rgba(74,222,128,.45);box-shadow:0 0 0 1px rgba(74,222,128,.12) inset}
+  .route-head{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+  .route-head h4{font-size:18px}
+  .tag{font-family:var(--display);font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--ink);background:var(--gold-soft);border-radius:6px;padding:3px 8px;display:inline-block}
+  .tag.you{background:var(--green)}
+  .seatpill{font-family:var(--display);font-size:11px;font-weight:700;color:#cdd6e3;background:var(--panel-3);border:1px solid var(--line);border-radius:6px;padding:3px 9px;margin-left:auto}
+  .route .sub{color:var(--muted);font-size:13.5px;margin-bottom:12px}
+  .route-min{font-size:12.5px;color:var(--muted);margin-top:13px;border-top:1px dashed var(--line);padding-top:11px}
+  .route-min b{color:var(--text)}
+
+  /* calculator */
+  .fmt-sel{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .fmt-btn{font-family:var(--display);font-weight:600;font-size:13px;letter-spacing:.2px;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--muted);cursor:pointer;transition:.15s}
+  .fmt-btn .seat{color:var(--gold);font-weight:700}
+  .fmt-btn.active{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+  .fmt-btn.active .seat{color:var(--red-deep)}
+  .calc{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .fmt-inputs{display:none}
+  .fmt-inputs.active{display:block}
+  .calc .field{margin-bottom:14px}
+  .calc label{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px;font-weight:600;margin-bottom:6px}
+  .calc label .w{font-family:var(--display);font-size:11px;color:var(--gold);font-weight:600}
+  .calc input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:6px;background:var(--panel-3);outline:none}
+  .calc input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);border:3px solid var(--ink);cursor:pointer;box-shadow:0 0 0 1px var(--gold)}
+  .calc input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--gold);border:3px solid var(--ink);cursor:pointer}
+  .calc .valnum{font-family:var(--display);font-weight:700;color:var(--text);min-width:34px;text-align:right;font-size:13px}
+  .gauge{background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;justify-content:center;text-align:center}
+  .gauge .score{font-family:var(--display);font-weight:700;font-size:clamp(46px,9vw,76px);line-height:1;letter-spacing:-1px}
+  .gauge .score.s-low{color:var(--red)} .gauge .score.s-mid{color:var(--gold)} .gauge .score.s-hi{color:var(--green)}
+  .gauge .of{color:var(--muted);font-size:13px;margin-top:2px}
+  .bar-target{margin:22px 0 8px;height:16px;border-radius:9px;background:var(--panel-3);position:relative;border:1px solid var(--line);overflow:visible}
+  .bar-target .fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--red-deep),var(--gold) 60%,var(--green));transition:width .4s ease}
+  .bar-target .tmark{position:absolute;top:-7px;bottom:-7px;width:3px;background:var(--text);transition:left .3s ease}
+  .bar-target .tmark::after{content:"เป้า";position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-family:var(--display);font-size:10px;color:var(--text);white-space:nowrap}
+  .verdict{font-family:var(--display);font-weight:600;font-size:15px;margin-top:14px}
+  .target-set{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:12px;font-size:13px;color:var(--muted)}
+  .target-set input{width:120px}
+
+  /* exam tabs */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .tab{font-family:var(--display);font-weight:600;font-size:13.5px;letter-spacing:.3px;padding:10px 15px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--muted);cursor:pointer;transition:.15s}
+  .tab .pct{color:var(--gold);font-weight:700}
+  .tab.active{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+  .tab.active .pct{color:var(--red-deep)}
+  .tabpanel{display:none;animation:fade .35s ease}
+  .tabpanel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  table.spec{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+  table.spec th,table.spec td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+  table.spec th{font-family:var(--display);font-size:12px;letter-spacing:.4px;color:var(--muted);text-transform:uppercase;font-weight:600}
+  table.spec td.num{font-family:var(--display);font-weight:700;color:var(--gold);white-space:nowrap}
+  .chip{display:inline-block;font-size:12px;background:var(--panel-3);border:1px solid var(--line);border-radius:20px;padding:3px 11px;margin:3px 4px 3px 0;color:#cdd6e3}
+  .chip.hot{border-color:var(--red);color:#ffb4b5;background:var(--red-dim)}
+  .legend{font-size:12px;color:var(--muted);margin-top:8px}
+  .legend .sw{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:middle;margin:0 4px 0 10px}
+
+  /* timeline */
+  .tl{position:relative;margin-top:6px;padding-left:8px}
+  .tl::before{content:"";position:absolute;left:14px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,var(--gold),var(--red),var(--line))}
+  .tli{position:relative;padding:0 0 22px 44px}
+  .tli .dot{position:absolute;left:6px;top:3px;width:18px;height:18px;border-radius:50%;background:var(--panel);border:2px solid var(--muted-line)}
+  .tli.key .dot{background:var(--red);border-color:var(--red);box-shadow:0 0 0 4px var(--red-dim)}
+  .tli .date{font-family:var(--display);font-weight:700;font-size:13.5px;color:var(--gold)}
+  .tli.key .date{color:var(--red)}
+  .tli .ev{font-size:14.5px;margin-top:2px}
+  .tli .ev .me{display:inline-block;font-family:var(--display);font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--ink);background:var(--green);border-radius:5px;padding:2px 7px;margin-left:6px;vertical-align:middle}
+  .tli .sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+
+  /* problems */
+  .q{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden}
+  .q-top{display:flex;gap:12px;align-items:flex-start;padding:16px 18px;cursor:pointer}
+  .q-no{font-family:var(--display);font-weight:700;font-size:12px;color:var(--ink);background:var(--gold);border-radius:6px;padding:3px 8px;flex:none;margin-top:2px}
+  .q-body{flex:1}
+  .q-topic{font-family:var(--display);font-size:11px;letter-spacing:.5px;color:var(--red);text-transform:uppercase;font-weight:600}
+  .q-text{font-size:15px;margin-top:5px;color:var(--text)}
+  .q-text .math{font-family:var(--display);font-weight:500}
+  .q-choices{list-style:none;margin-top:10px;font-size:14px}
+  .q-choices li{padding:4px 0 4px 26px;position:relative;color:#cdd6e3}
+  .q-choices li::before{content:attr(data-c);position:absolute;left:0;top:4px;font-family:var(--display);font-weight:700;color:var(--gold);font-size:12px;border:1px solid var(--line);border-radius:4px;width:18px;height:18px;display:flex;align-items:center;justify-content:center}
+  .q-toggle{flex:none;font-family:var(--display);font-size:12px;font-weight:600;color:var(--gold);border:1px solid var(--line);border-radius:8px;padding:6px 11px;background:transparent;cursor:pointer;white-space:nowrap}
+  .q-sol{display:none;padding:0 18px 18px 18px}
+  .q-sol.open{display:block}
+  .q-sol .ans{background:var(--green-dim);border:1px solid rgba(74,222,128,.4);border-radius:10px;padding:13px 15px;font-size:14.5px}
+  .q-sol .ans b{color:var(--green)}
+  .q-sol .work{font-size:14px;color:#cdd6e3;margin-top:10px}
+  .q-sol .work .step{padding:4px 0;border-bottom:1px dashed var(--line-soft)}
+  .q-sol .work .math{font-family:var(--display);color:var(--text)}
+
+  /* checklist */
+  .ck{list-style:none}
+  .ck li{display:flex;gap:12px;align-items:flex-start;padding:11px 14px;border:1px solid var(--line);border-radius:11px;margin-bottom:9px;background:var(--panel);cursor:pointer;transition:.15s}
+  .ck li:hover{border-color:var(--muted-line)}
+  .ck .box{flex:none;width:22px;height:22px;border-radius:6px;border:2px solid var(--muted-line);margin-top:1px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;color:var(--ink);transition:.15s}
+  .ck li.done .box{background:var(--green);border-color:var(--green)}
+  .ck li.done .txt{color:var(--muted);text-decoration:line-through}
+  .ck .txt{font-size:14.5px}
+  .ck .txt small{display:block;color:var(--muted);font-size:12.5px;text-decoration:none}
+
+  .plan-row{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .plan-row:last-child{border-bottom:0}
+  .plan-when{flex:none;width:120px;font-family:var(--display);font-weight:700;font-size:13.5px;color:var(--gold)}
+  .plan-what{font-size:14px;color:#cdd6e3}
+
+  .docs li{font-size:14px;color:#cdd6e3;padding:7px 0 7px 24px;position:relative;list-style:none}
+  .docs li::before{content:"▸";position:absolute;left:4px;color:var(--gold)}
+
+  /* footer */
+  footer{border-top:1px solid var(--line);padding:40px 0 60px;margin-top:30px}
+  .links{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:18px 0}
+  .links a{display:block;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:13px 15px;color:var(--text);font-size:14px;transition:.15s}
+  .links a:hover{border-color:var(--gold);text-decoration:none;background:var(--panel-2)}
+  .links a span{display:block;font-family:var(--display);font-size:11px;color:var(--muted);letter-spacing:.4px}
+  .disclaimer{font-size:12.5px;color:var(--muted-line);border:1px dashed var(--line);border-radius:12px;padding:15px 17px;margin-top:6px}
+  .disclaimer b{color:var(--gold)}
+
+  .section-note{font-size:13px;color:var(--muted);margin-top:14px}
+
+  @media(max-width:780px){
+    .statbar{grid-template-columns:1fr 1fr}
+    .grid2,.grid3,.calc{grid-template-columns:1fr}
+    .wlabel{width:120px}
+    .mod-head{gap:11px}
+    .plan-when{width:92px}
+    nav.hud-nav{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HUD NAV ===== -->
+<header class="hud">
+  <div class="wrap hud-row">
+    <div class="brand"><span class="dot"></span>
+      <div>TCAS70 · จิตวิทยา@TU<small>มิชชันสอบติด จิตวิทยา ศิลปศาสตร์ ธรรมศาสตร์</small></div>
+    </div>
+    <nav class="hud-nav">
+      <a href="#routes">3 รูปแบบรับ</a>
+      <a href="#calc">คำนวณคะแนน</a>
+      <a href="#exams">เจาะสนามสอบ</a>
+      <a href="#timeline">ปฏิทิน</a>
+      <a href="#problems">ตัวอย่างโจทย์</a>
+      <a href="#prep">เช็กลิสต์</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<div class="wrap">
+  <section class="hero">
+    <span class="eyebrow">Mission Briefing // ภารกิจ DEK70</span>
+    <h1>สอบติด <span class="hl">จิตวิทยา</span><br>ศิลปศาสตร์ ธรรมศาสตร์ · รอบ 3 Admission</h1>
+    <p class="lede">คณะศิลปศาสตร์ · <b>วท.บ. สาขาวิชาจิตวิทยา</b> (ภาษาไทย ปกติ) · ศูนย์รังสิต — สรุปทุกอย่างที่ต้องรู้สำหรับรอบ 3 ปีการศึกษา 2570 ครบในหน้าเดียว จุดพิเศษคือสาขานี้เป็น <b>ปริญญาวิทยาศาสตร์ (วท.บ.)</b> เกณฑ์จึงมีทั้งชีววิทยาและคณิตศาสตร์ — สายวิทย์-คณิตอย่างน้องได้เปรียบ</p>
+
+    <div class="statbar">
+      <div class="stat">
+        <div class="k">ที่นั่งรอบ 3</div>
+        <div class="v">60 <small>ที่นั่ง (รวม 3 รูปแบบ)</small></div>
+      </div>
+      <div class="stat red">
+        <div class="k">อัตราแข่งขัน (ปี 68)</div>
+        <div class="v">64.5<small> : 1 — โหดมาก</small></div>
+      </div>
+      <div class="stat green">
+        <div class="k">นับถอยหลังสอบ A-Level วันแรก</div>
+        <div class="cd" id="countdown"><span id="cd-days">—</span><small>วัน</small></div>
+      </div>
+      <div class="stat">
+        <div class="k">ยื่นสมัครรอบ 3</div>
+        <div class="v">7–11 <small>พ.ค. 70</small></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===== 01 ROUTES ===== -->
+<section class="mod" id="routes">
+  <div class="wrap">
+    <div class="mod-head">
+      <div class="mod-no">01</div>
+      <div>
+        <h2>3 รูปแบบการรับ — เลือกทางที่ใช่ที่สุดของเรา</h2>
+        <p>ต่างจากหลายสาขาที่มีสูตรเดียว จิตวิทยา มธ. รอบ 3 เปิดรับถึง <b>3 รูปแบบ</b> แยกที่นั่งกันคนละโควตา น้องยื่นสาขานี้แล้วระบบจะพิจารณาในรูปแบบที่เรามีคุณสมบัติครบให้โดยอัตโนมัติ ตัวเลขอิงเกณฑ์ TCAS69 ล่าสุด (เกณฑ์ TCAS70 มักประกาศปลายปี 2569 และมักใกล้เคียงเดิม)</p>
+      </div>
+    </div>
+
+    <!-- ROUTE A -->
+    <div class="card route best">
+      <div class="route-head">
+        <span class="tag you">แนะนำสำหรับน้อง TAN</span>
+        <h4>รูปแบบ A · A-Level 5 วิชา</h4>
+        <span class="seatpill">25 ที่นั่ง</span>
+      </div>
+      <div class="sub">5 วิชา ถ่วงน้ำหนัก <b>เท่ากันวิชาละ 20%</b> — มีชีววิทยา + คณิต 1 ซึ่งเป็นวิชาที่สายวิทย์-คณิตเรียนอยู่แล้ว ทำให้น้องได้เปรียบในเส้นทางนี้มากที่สุด</div>
+      <div class="wrow"><div class="wlabel"><div class="t">A-Level คณิต 1</div><div class="s">คณิตประยุกต์ 1</div></div><div class="wtrack"><div class="wfill green" style="width:20%">20%</div></div></div>
+      <div class="wrow"><div class="wlabel"><div class="t">A-Level ชีววิทยา</div><div class="s">รหัส 66</div></div><div class="wtrack"><div class="wfill green" style="width:20%">20%</div></div></div>
+      <div class="wrow"><div class="wlabel"><div class="t">A-Level สังคมศึกษา</div><div class="s">รหัส 70</div></div><div class="wtrack"><div class="wfill gold" style="width:20%">20%</div></div></div>
+      <div class="wrow"><div class="wlabel"><div class="t">A-Level ภาษาไทย</div><div class="s">รหัส 81</div></div><div class="wtrack"><div class="wfill gold" style="width:20%">20%</div></div></div>
+      <div class="wrow"><div class="wlabel"><div class="t">A-Level ภาษาอังกฤษ</div><div class="s">รหัส 82</div></div><div class="wtrack"><div class="wfill gold" style="width:20%">20%</div></div></div>
+      <div class="route-min"><b>เกณฑ์ขั้นต่ำ:</b> GPAX ≥ 2.75 · คณิต 1 ≥ 25 คะแนน · ชีววิทยา/สังคม/ไทย/อังกฤษ แต่ละวิชา ≥ 30 คะแนน (ถ้าวิชาใดต่ำกว่าขั้นต่ำ = ตัดสิทธิ์ทันที)</div>
+    </div>
+
+    <!-- ROUTE B -->
+    <div class="card route">
+      <div class="route-head">
+        <span class="tag">ตัวเลือกที่ 2</span>
+        <h4>รูปแบบ B · TGAT 100%</h4>
+        <span class="seatpill">10 ที่นั่ง</span>
+      </div>
+      <div class="sub">ใช้ TGAT อย่างเดียวเต็ม 100% — ที่นั่งน้อยและแข่งดุ แต่ <b>ไม่ต้องสอบวิชาเฉพาะเพิ่มเลย</b> เพราะ TGAT ต้องสอบอยู่แล้ว เป็นเส้นทางสำรองที่คุ้มมากถ้าทำ TGAT ได้ดี</div>
+      <div class="wrow"><div class="wlabel"><div class="t">TGAT (1+2+3)</div><div class="s">ความถนัดทั่วไป</div></div><div class="wtrack"><div class="wfill red" style="width:100%">100%</div></div></div>
+      <div class="route-min"><b>เกณฑ์ขั้นต่ำ:</b> GPAX ≥ 2.75 · ใช้คะแนน TGAT รวมทั้ง 3 พาร์ต (อังกฤษ + การคิดเหตุผล + สมรรถนะการทำงาน)</div>
+    </div>
+
+    <!-- ROUTE C -->
+    <div class="card route">
+      <div class="route-head">
+        <span class="tag">ตัวเลือกสายภาษา</span>
+        <h4>รูปแบบ C · A-Level 4 วิชา</h4>
+        <span class="seatpill">25 ที่นั่ง</span>
+      </div>
+      <div class="sub">เน้นสังคม–ไทย–อังกฤษ + เลือกอีก 1 วิชา (คณิต 2 หรือภาษาที่ 3) ถ่วงน้ำหนัก <b>เท่ากันวิชาละ 25%</b> — เหมาะกับสายศิลป์-ภาษามากกว่า แต่ถ้าน้องถนัดคณิต 2/ภาษาที่สาม ก็ใช้เป็นทางเลือกได้</div>
+      <div class="wrow"><div class="wlabel"><div class="t">A-Level สังคมศึกษา</div><div class="s">รหัส 70</div></div><div class="wtrack"><div class="wfill gold" style="width:25%">25%</div></div></div>
+      <div class="wrow"><div class="wlabel"><div class="t">A-Level ภาษาไทย</div><div class="s">รหัส 81</div></div><div class="wtrack"><div class="wfill gold" style="width:25%">25%</div></div></div>
+      <div class="wrow"><div class="wlabel"><div class="t">A-Level ภาษาอังกฤษ</div><div class="s">รหัส 82</div></div><div class="wtrack"><div class="wfill gold" style="width:25%">25%</div></div></div>
+      <div class="wrow"><div class="wlabel"><div class="t">เลือก 1 วิชา</div><div class="s">คณิต2/ฝรั่งเศส/เยอรมัน/ญี่ปุ่น/เกาหลี/จีน/สเปน</div></div><div class="wtrack"><div class="wfill dim" style="width:25%">25%</div></div></div>
+      <div class="route-min"><b>เกณฑ์ขั้นต่ำ:</b> GPAX ≥ 2.75 · สังคม/ไทย/อังกฤษ และวิชาเลือก แต่ละวิชา ≥ 30 คะแนน</div>
+    </div>
+
+    <div class="pin-insight">
+      <div class="ic">🎯</div>
+      <div><b>กลยุทธ์ที่ใช่สำหรับน้อง:</b> ยิงเป้าหลักที่ <b style="color:var(--green)">รูปแบบ A</b> เพราะมีชีววิทยา + คณิต 1 ที่น้องเรียนสายวิทย์อยู่แล้ว (ได้เปรียบกว่าเด็กสายอื่น) และยังมีที่นั่งเยอะ (25 ที่นั่ง) ขณะเดียวกันน้องก็ "ติดสอบ TGAT อยู่แล้ว" → จึงมีสิทธิ์ลุ้น <b>รูปแบบ B</b> ไปพร้อมกันแบบไม่ต้องเหนื่อยเพิ่ม เท่ากับมี 2 ประตูเข้าในการยื่นครั้งเดียว</div>
+    </div>
+
+    <div class="pin-insight" style="background:var(--gold-dim);border-color:rgba(255,201,60,.4)">
+      <div class="ic">⚠️</div>
+      <div style="color:#e7ecf3"><b style="color:var(--gold)">ต่างจาก CS ตรงนี้:</b> ทุกรูปแบบของจิตวิทยา <b>บังคับ GPAX ≥ 2.75</b> ดังนั้นเกรดที่โรงเรียนสำคัญจริง ต้องรักษาให้ถึงเกณฑ์ตลอด 6 เทอม ไม่งั้นต่อให้คะแนนสอบดีก็ถูกตัดสิทธิ์</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 02 CALCULATOR ===== -->
+<section class="mod" id="calc">
+  <div class="wrap">
+    <div class="mod-head">
+      <div class="mod-no">02</div>
+      <div>
+        <h2>เครื่องคำนวณคะแนน Admission</h2>
+        <p>เลือกรูปแบบที่จะยื่น แล้วลากใส่คะแนนที่คาดว่าจะทำได้ (เต็มวิชาละ 100) ระบบจะคิดคะแนนรวมถ่วงน้ำหนักของรูปแบบนั้นเทียบกับเป้าที่ตั้งไว้ทันที</p>
+      </div>
+    </div>
+
+    <div class="fmt-sel">
+      <button class="fmt-btn active" data-f="alvl5" type="button">รูปแบบ A · A-Level 5 วิชา <span class="seat">25 ที่นั่ง</span></button>
+      <button class="fmt-btn" data-f="tgat" type="button">รูปแบบ B · TGAT <span class="seat">10 ที่นั่ง</span></button>
+      <button class="fmt-btn" data-f="alvl4" type="button">รูปแบบ C · A-Level 4 วิชา <span class="seat">25 ที่นั่ง</span></button>
+    </div>
+
+    <div class="calc">
+      <div class="card">
+        <!-- A-LEVEL 5 -->
+        <div class="fmt-inputs active" data-g="alvl5">
+          <div class="field"><label>A-Level คณิต 1 <span class="w">×20%</span></label>
+            <div style="display:flex;gap:12px;align-items:center"><input type="range" min="0" max="100" value="62" id="a_math" oninput="calc()"><span class="valnum" id="a_math_v">62</span></div></div>
+          <div class="field"><label>A-Level ชีววิทยา <span class="w">×20%</span></label>
+            <div style="display:flex;gap:12px;align-items:center"><input type="range" min="0" max="100" value="62" id="a_bio" oninput="calc()"><span class="valnum" id="a_bio_v">62</span></div></div>
+          <div class="field"><label>A-Level สังคมศึกษา <span class="w">×20%</span></label>
+            <div style="display:flex;gap:12px;align-items:center"><input type="range" min="0" max="100" value="62" id="a_soc" oninput="calc()"><span class="valnum" id="a_soc_v">62</span></div></div>
+          <div class="field"><label>A-Level ภาษาไทย <span class="w">×20%</span></label>
+            <div style="display:flex;gap:12px;align-items:center"><input type="range" min="0" max="100" value="62" id="a_thai" oninput="calc()"><span class="valnum" id="a_thai_v">62</span></div></div>
+          <div class="field"><label>A-Level ภาษาอังกฤษ <span class="w">×20%</span></label>
+            <div style="display:flex;gap:12px;align-items:center"><input type="range" min="0" max="100" value="62" id="a_eng" oninput="calc()"><span class="valnum" id="a_eng_v">62</span></div></div>
+        </div>
+        <!-- TGAT -->
+        <div class="fmt-inputs" data-g="tgat">
+          <div class="field"><label>TGAT1 — อังกฤษสื่อสาร <span class="w">×⅓</span></label>
+            <div style="display:flex;gap:12px;align-items:center"><input type="range" min="0" max="100" value="60" id="g_t1" oninput="calc()"><span class="valnum" id="g_t1_v">60</span></div></div>
+          <div class="field"><label>TGAT2 — การคิดเหตุผล <span class="w">×⅓</span></label>
+            <div style="display:flex;gap:12px;align-items:center"><input type="range" min="0" max="100" value="60" id="g_t2" oninput="calc()"><span class="valnum" id="g_t2_v">60</span></div></div>
+          <div class="field"><label>TGAT3 — สมรรถนะการทำงาน <span class="w">×⅓</span></label>
+            <div style="display:flex;gap:12px;align-items:center"><input type="range" min="0" max="100" value="65" id="g_t3" oninput="calc()"><span class="valnum" id="g_t3_v">65</span></div></div>
+          <p class="section-note" style="margin-top:4px">รูปแบบ B คิดจากค่าเฉลี่ยของ TGAT ทั้ง 3 พาร์ต (พาร์ตละ 1 ใน 3)</p>
+        </div>
+        <!-- A-LEVEL 4 -->
+        <div class="fmt-inputs" data-g="alvl4">
+          <div class="field"><label>A-Level สังคมศึกษา <span class="w">×25%</span></label>
+            <div style="display:flex;gap:12px;align-items:center"><input type="range" min="0" max="100" value="62" id="b_soc" oninput="calc()"><span class="valnum" id="b_soc_v">62</span></div></div>
+          <div class="field"><label>A-Level ภาษาไทย <span class="w">×25%</span></label>
+            <div style="display:flex;gap:12px;align-items:center"><input type="range" min="0" max="100" value="62" id="b_thai" oninput="calc()"><span class="valnum" id="b_thai_v">62</span></div></div>
+          <div class="field"><label>A-Level ภาษาอังกฤษ <span class="w">×25%</span></label>
+            <div style="display:flex;gap:12px;align-items:center"><input type="range" min="0" max="100" value="62" id="b_eng" oninput="calc()"><span class="valnum" id="b_eng_v">62</span></div></div>
+          <div class="field"><label>วิชาเลือก (คณิต2/ภาษา) <span class="w">×25%</span></label>
+            <div style="display:flex;gap:12px;align-items:center"><input type="range" min="0" max="100" value="62" id="b_el" oninput="calc()"><span class="valnum" id="b_el_v">62</span></div></div>
+        </div>
+      </div>
+
+      <div class="gauge">
+        <div class="score s-mid" id="g_score">0.00</div>
+        <div class="of">คะแนนรวมถ่วงน้ำหนัก (เต็ม 100)</div>
+        <div class="bar-target">
+          <div class="fill" id="g_fill" style="width:0%"></div>
+          <div class="tmark" id="g_tmark" style="left:62%"></div>
+        </div>
+        <div class="verdict" id="g_verdict">—</div>
+        <div class="target-set">
+          ตั้งเป้าที่ <input type="range" min="45" max="85" value="62" id="i_target" oninput="calc()">
+          <span class="valnum" id="v_target">62</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer" style="margin-top:18px">
+      <b>เรื่องคะแนนเป้า:</b> ทปอ. ไม่ประกาศ "คะแนนผ่าน" ล่วงหน้า แต่จิตวิทยา มธ. เป็นสาขายอดฮิตที่แข่งดุเป็นอันดับต้น ๆ ของประเทศ (ปี 68 อัตราแข่งขัน <b>64.5 : 1</b>) คะแนนต่ำสุดที่ติดจึงค่อนข้างสูง รูปแบบ A-Level ที่ทุกวิชาถ่วงเท่ากันมักต้องทำเฉลี่ยให้แตะ ~62–68 ขึ้นไปถึงจะอุ่นใจ ตั้งเป้า <b>~65</b> ไว้ก่อนแล้วค่อยปรับตามสถิติจริง — ตัวเลขจริงดูได้จากไฟล์สถิติ min–max ของ mytcas และหน้าโปรแกรมในลิงก์ท้ายหน้า
+    </div>
+  </div>
+</section>
+
+<!-- ===== 03 EXAMS ===== -->
+<section class="mod" id="exams">
+  <div class="wrap">
+    <div class="mod-head">
+      <div class="mod-no">03</div>
+      <div>
+        <h2>เจาะสนามสอบที่ต้องใช้</h2>
+        <p>กดสลับดูโครงสร้างข้อสอบของแต่ละวิชาในรูปแบบ A (เส้นทางหลัก) + TGAT สำหรับรูปแบบ B ทุกวิชา A-Level เต็ม 100 คะแนน สอบแบบกระดาษ (PBT)</p>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-t="math">คณิต 1 <span class="pct">20%</span></button>
+      <button class="tab" data-t="bio">ชีววิทยา <span class="pct">20%</span></button>
+      <button class="tab" data-t="soc">สังคม <span class="pct">20%</span></button>
+      <button class="tab" data-t="thai">ภาษาไทย <span class="pct">20%</span></button>
+      <button class="tab" data-t="eng">อังกฤษ <span class="pct">20%</span></button>
+      <button class="tab" data-t="tgat">TGAT <span class="pct">รูปแบบ B</span></button>
+    </div>
+
+    <!-- MATH -->
+    <div class="tabpanel active" data-p="math">
+      <div class="card">
+        <h3 style="font-size:19px;color:var(--gold)">A-Level คณิตศาสตร์ประยุกต์ 1 (รหัส 61)</h3>
+        <p style="color:var(--muted);margin-top:6px;font-size:14px">ครอบคลุมคณิต ม.ปลายพื้นฐาน+เพิ่มเติม เป็นแนว Speed Test (เฉลี่ยข้อละ 3 นาที) — สำหรับสายวิทย์-คณิตถือเป็นวิชาที่ "เก็บแต้มได้" ถ้าฝึกมาดี</p>
+        <table class="spec">
+          <tr><th>หัวข้อ</th><th>รายละเอียด</th></tr>
+          <tr><td>จำนวนข้อ / เวลา</td><td class="num">30 ข้อ · 90 นาที · 100 คะแนน</td></tr>
+          <tr><td>ตอนที่ 1</td><td>ปรนัย 5 ตัวเลือก 25 ข้อ (ข้อละ 3) = 75 คะแนน</td></tr>
+          <tr><td>ตอนที่ 2</td><td>ระบายคำตอบที่เป็นตัวเลข 5 ข้อ (ข้อละ 5) = 25 คะแนน</td></tr>
+        </table>
+        <h4 style="font-family:var(--display);margin:20px 0 6px;font-size:15px">บทที่ออกบ่อย (4 สาระ)</h4>
+        <span class="chip hot">เซต</span><span class="chip hot">ตรรกศาสตร์</span><span class="chip hot">เอกซ์โพ–ลอการิทึม</span><span class="chip hot">ตรีโกณมิติ</span><span class="chip hot">เมทริกซ์</span><span class="chip hot">ลำดับและอนุกรม</span><span class="chip">ฟังก์ชัน</span><span class="chip">จำนวนเชิงซ้อน</span><span class="chip">สถิติ</span><span class="chip">ความน่าจะเป็น</span><span class="chip">เรขาคณิตวิเคราะห์</span><span class="chip">เวกเตอร์</span><span class="chip">แคลคูลัส</span>
+        <p class="legend"><span class="sw" style="background:var(--red-dim);border:1px solid var(--red)"></span>ป้ายแดง = ออกบ่อย/คุ้มเก็บก่อน • โครงสร้างปี 66–69 เหมือนเดิม → ฝึกข้อสอบเก่าได้เต็มที่</p>
+      </div>
+    </div>
+
+    <!-- BIO -->
+    <div class="tabpanel" data-p="bio">
+      <div class="card">
+        <h3 style="font-size:19px;color:var(--gold)">A-Level ชีววิทยา (รหัส 66)</h3>
+        <p style="color:var(--muted);margin-top:6px;font-size:14px">วิชา "ตัวชูโรง" ของสายวิทย์ในเส้นทางนี้ ออกเกือบทุกบทใน ม.4–6 เน้นความเข้าใจระบบ + การตีความข้อมูล/กราฟ มากกว่าท่องจำล้วน</p>
+        <table class="spec">
+          <tr><th>หัวข้อ</th><th>รายละเอียด</th></tr>
+          <tr><td>จำนวนข้อ / เวลา</td><td class="num">40 ข้อ · 90 นาที · 100 คะแนน</td></tr>
+          <tr><td>ตอนที่ 1</td><td>ปรนัย 5 ตัวเลือก 35 ข้อ (ข้อละ 2.4) = 84 คะแนน</td></tr>
+          <tr><td>ตอนที่ 2</td><td>เลือกตอบเชิงซ้อน 5 ข้อ (ข้อละ 3.2) = 16 คะแนน · ถูก 3 ข้อย่อยได้เต็ม, ถูก 2 ได้ครึ่ง, ถูก 1 ไม่ได้คะแนน</td></tr>
+        </table>
+        <h4 style="font-family:var(--display);margin:20px 0 6px;font-size:15px">บทหลักที่ต้องเก็บ</h4>
+        <span class="chip hot">ระบบประสาท &amp; การเคลื่อนที่</span><span class="chip hot">พันธุศาสตร์ &amp; สารพันธุกรรม</span><span class="chip">เซลล์ &amp; การลำเลียง</span><span class="chip">เคมีพื้นฐานของสิ่งมีชีวิต</span><span class="chip">ระบบต่าง ๆ ในร่างกายมนุษย์</span><span class="chip">โครงสร้าง/หน้าที่ของพืช</span><span class="chip">วิวัฒนาการ</span><span class="chip">ความหลากหลาย &amp; อนุกรมวิธาน</span><span class="chip">ระบบนิเวศ &amp; ไบโอม</span>
+        <div class="pin-insight" style="margin-top:16px"><div class="ic">🧠</div><div>เกร็ดดี: บท <b>ระบบประสาท</b> (เซลล์ประสาท, การส่งกระแสประสาท) เกี่ยวโยงตรงกับเนื้อหาจิตวิทยาที่จะได้เรียนต่อ — เก็บบทนี้ให้แม่นจะได้สองเด้ง</div></div>
+      </div>
+    </div>
+
+    <!-- SOC -->
+    <div class="tabpanel" data-p="soc">
+      <div class="card">
+        <h3 style="font-size:19px;color:var(--gold)">A-Level สังคมศึกษา (รหัส 70)</h3>
+        <p style="color:var(--muted);margin-top:6px;font-size:14px">เนื้อหากว้าง 5 สาระ แต่ละสาระออกประมาณ 10 ข้อเท่า ๆ กัน — กลยุทธ์คือ "เก็บให้ครบทุกสาระ" อย่าทิ้งสาระใดสาระหนึ่ง เพราะน้ำหนักพอ ๆ กัน</p>
+        <table class="spec">
+          <tr><th>หัวข้อ</th><th>รายละเอียด</th></tr>
+          <tr><td>จำนวนข้อ / เวลา</td><td class="num">50 ข้อ · 90 นาที · 100 คะแนน</td></tr>
+          <tr><td>รูปแบบ</td><td>ปรนัย 5 ตัวเลือกทั้งหมด</td></tr>
+        </table>
+        <h4 style="font-family:var(--display);margin:20px 0 6px;font-size:15px">5 สาระ (สาระละ ~10 ข้อ)</h4>
+        <span class="chip">① ศาสนา ศีลธรรม จริยธรรม</span><span class="chip hot">② หน้าที่พลเมือง &amp; กฎหมาย</span><span class="chip hot">③ เศรษฐศาสตร์</span><span class="chip">④ ประวัติศาสตร์</span><span class="chip">⑤ ภูมิศาสตร์</span>
+        <p class="legend"><span class="sw" style="background:var(--red-dim);border:1px solid var(--red)"></span>หน้าที่พลเมือง/กฎหมาย และ เศรษฐศาสตร์ เป็นสาระที่โจทย์ชอบหลอกด้วยรายละเอียด — ฝึกแยกแยะให้ชิน</p>
+      </div>
+    </div>
+
+    <!-- THAI -->
+    <div class="tabpanel" data-p="thai">
+      <div class="card">
+        <h3 style="font-size:19px;color:var(--gold)">A-Level ภาษาไทย (รหัส 81)</h3>
+        <p style="color:var(--muted);margin-top:6px;font-size:14px">ครึ่งหนึ่งเป็นทักษะ "การอ่าน/ตีความ" ที่ฝึกแล้วทำคะแนนได้ไว อีกครึ่งเป็นหลักภาษาที่ต้องจำกฎ — เป็นวิชาที่ลงแรงน้อยแต่ได้แต้มคุ้มถ้าฝึกโจทย์สม่ำเสมอ</p>
+        <table class="spec">
+          <tr><th>หัวข้อ</th><th>รายละเอียด</th></tr>
+          <tr><td>จำนวนข้อ / เวลา</td><td class="num">50 ข้อ · 90 นาที · 100 คะแนน</td></tr>
+          <tr><td>รูปแบบ</td><td>ปรนัย 5 ตัวเลือกทั้งหมด</td></tr>
+        </table>
+        <h4 style="font-family:var(--display);margin:20px 0 6px;font-size:15px">ขอบเขตเนื้อหา</h4>
+        <span class="chip hot">การอ่าน &amp; จับใจความ/เจตนาผู้เขียน</span><span class="chip hot">หลักภาษา (ชนิดคำ/ประโยค/ราชาศัพท์)</span><span class="chip">การเขียน &amp; เรียงความ</span><span class="chip">การพูด–ฟัง</span><span class="chip">การใช้ภาษาให้เหมาะกับบริบท</span>
+        <p class="legend">โจทย์ "เจตนาของผู้เขียน" และ "การอ่านเชิงวิเคราะห์" ออกเยอะ — ฝึกอ่านบทความสั้นแล้วสรุปแก่นทุกวัน</p>
+      </div>
+    </div>
+
+    <!-- ENG -->
+    <div class="tabpanel" data-p="eng">
+      <div class="card">
+        <h3 style="font-size:19px;color:var(--gold)">A-Level ภาษาอังกฤษ (รหัส 82)</h3>
+        <p style="color:var(--muted);margin-top:6px;font-size:14px">ครอบ 4 ทักษะ จุดเก็บแต้มใหญ่คือ Reading (สัดส่วนข้อเยอะสุด) — ฝึก reading + คลังศัพท์ทุกวันคือทางลัด วิชานี้ยังช่วย TGAT1 (รูปแบบ B) ไปในตัว</p>
+        <table class="spec">
+          <tr><th>หัวข้อ</th><th>รายละเอียด</th></tr>
+          <tr><td>จำนวนข้อ / เวลา</td><td class="num">80 ข้อ · 90 นาที · 100 คะแนน</td></tr>
+          <tr><td>รูปแบบ</td><td>ปรนัย 4 ตัวเลือก แบ่งเป็น 4 ทักษะ</td></tr>
+        </table>
+        <h4 style="font-family:var(--display);margin:20px 0 6px;font-size:15px">4 ทักษะที่วัด</h4>
+        <span class="chip hot">Reading (อ่านจับใจความ)</span><span class="chip">Speaking/Conversation</span><span class="chip">Writing (โครงสร้าง/ไวยากรณ์)</span><span class="chip">Vocabulary</span>
+        <p class="legend">เรื่องไวยากรณ์ที่ออกบ่อย: tense, conjunction, preposition — ฝึก reading ยาว ๆ ให้ชินกับการกวาดหา keyword ในเวลาจำกัด</p>
+      </div>
+    </div>
+
+    <!-- TGAT -->
+    <div class="tabpanel" data-p="tgat">
+      <div class="card">
+        <h3 style="font-size:19px;color:var(--gold)">TGAT — ความถนัดทั่วไป (หัวใจของรูปแบบ B)</h3>
+        <p style="color:var(--muted);margin-top:6px;font-size:14px">รวม 3 พาร์ต เต็ม 100 ต่อพาร์ต สอบกระดาษ 3 ชั่วโมง และ <b>ฟรีค่าสมัคร</b> — ในรูปแบบ B จิตวิทยา ใช้ TGAT รวมทั้ง 3 พาร์ต (เฉลี่ยเท่ากัน) จึงต้องเก็บให้ครบทั้งสามด้าน</p>
+        <table class="spec">
+          <tr><th>พาร์ต</th><th>เนื้อหา</th><th>ข้อ</th></tr>
+          <tr><td><b>TGAT1</b></td><td>ภาษาอังกฤษสื่อสาร: การพูด (ถาม-ตอบ/เติมบทสนทนา) + การอ่าน</td><td class="num">60</td></tr>
+          <tr><td><b>TGAT2</b></td><td>การคิดอย่างมีเหตุผล: ภาษา / ตัวเลข / มิติสัมพันธ์ / เหตุผล</td><td class="num">80</td></tr>
+          <tr><td><b>TGAT3</b></td><td>สมรรถนะการทำงาน: สร้างคุณค่า-นวัตกรรม / แก้ปัญหาซับซ้อน / จัดการอารมณ์ / พลเมืองมีส่วนร่วม</td><td class="num">60</td></tr>
+        </table>
+        <p class="legend">TGAT1 ฝึกภาษาอังกฤษได้ทุกวัน • TGAT2 ฝึกแนวข้อสอบจะคุ้นเร็ว • TGAT3 เน้นทัศนคติ/สถานการณ์ อ่านสรุปก็พอ — ในรูปแบบ B ทั้งสามพาร์ตน้ำหนักเท่ากัน อย่าทิ้งพาร์ตใดพาร์ตหนึ่ง</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 04 TIMELINE ===== -->
+<section class="mod" id="timeline">
+  <div class="wrap">
+    <div class="mod-head">
+      <div class="mod-no">04</div>
+      <div>
+        <h2>ปฏิทิน TCAS70 — หมุดสำคัญของน้อง</h2>
+        <p>กำหนดการอย่างเป็นทางการจาก ทปอ. (ปีการศึกษา 2570) จุดสีแดงคือวันที่เกี่ยวข้องกับน้องโดยตรง — โดยเฉพาะ "วันสอบมาราธอน 13 มี.ค." ที่จิตวิทยาต้องสอบถึง 3 วิชาในวันเดียว</p>
+      </div>
+    </div>
+
+    <div class="tl">
+      <div class="tli"><div class="dot"></div><div class="date">15 ก.ค. 69</div><div class="ev">ลงทะเบียน myTCAS</div><div class="sub">ทำตั้งแต่เนิ่น ๆ จะได้ไม่ลนช่วงสมัครจริง</div></div>
+      <div class="tli"><div class="dot"></div><div class="date">4–10 พ.ย. 69</div><div class="ev">สมัครสอบ TGAT / TPAT2-5</div><div class="sub">จิตวิทยาใช้ TGAT (รูปแบบ B) — อย่าลืมกดรับสิทธิ์สอบฟรี</div></div>
+      <div class="tli key"><div class="dot"></div><div class="date">30 ม.ค. 70</div><div class="ev">สอบ TGAT (ทั้ง 3 พาร์ต)<span class="me">วันของน้อง</span></div><div class="sub">สำคัญสำหรับรูปแบบ B • ช่วงสอบจริงคือ 30 ม.ค.–1 ก.พ. (จิตวิทยาไม่ต้องใช้ TPAT3)</div></div>
+      <div class="tli"><div class="dot"></div><div class="date">14–20 ม.ค. 70</div><div class="ev">สมัครสอบ A-Level</div><div class="sub">เลือกให้ครบ: คณิต 1, ชีววิทยา, สังคม, ไทย, อังกฤษ (รูปแบบ A)</div></div>
+      <div class="tli"><div class="dot"></div><div class="date">28 ก.พ. 70</div><div class="ev">ประกาศผล TGAT / TPAT</div></div>
+      <div class="tli key"><div class="dot"></div><div class="date">13 มี.ค. 70</div><div class="ev">A-Level วันแรก — สอบ 3 วิชารวด<span class="me">วันมาราธอน</span></div><div class="sub">ชีววิทยา 08.30–10.00 · ภาษาไทย 13.30–15.00 · สังคมศึกษา 15.30–17.00 — เตรียมพลังกาย/สมาธิให้พร้อมทั้งวัน</div></div>
+      <div class="tli key"><div class="dot"></div><div class="date">14 มี.ค. 70</div><div class="ev">A-Level วันสอง — คณิต 1 + อังกฤษ<span class="me">วันของน้อง</span></div><div class="sub">คณิตประยุกต์ 1 08.30–10.00 · ภาษาอังกฤษ 11.00–12.30 (ถ้าใช้รูปแบบ C ที่ต้องสอบคณิต 2 จะอยู่ 15 มี.ค.)</div></div>
+      <div class="tli"><div class="dot"></div><div class="date">20 เม.ย. 70</div><div class="ev">ประกาศผลคะแนน A-Level</div><div class="sub">ครบคะแนนแล้ว → เอามาคำนวณในเครื่องคิดด้านบนได้เลย</div></div>
+      <div class="tli key"><div class="dot"></div><div class="date">7–11 พ.ค. 70</div><div class="ev">รับสมัครรอบ 3 Admission<span class="me">วันของน้อง</span></div><div class="sub">ยื่นได้สูงสุด 10 อันดับ (DEK70 มักยื่นฟรี 7 อันดับแรก) — ยื่นจิตวิทยาครั้งเดียว ลุ้นได้ทั้งรูปแบบ A และ B</div></div>
+      <div class="tli key"><div class="dot"></div><div class="date">22 พ.ค. 70</div><div class="ev">ประกาศผลรอบ 3 ครั้งที่ 1 + ยืนยันสิทธิ์ 22–23 พ.ค.<span class="me">วันของน้อง</span></div><div class="sub">ติดอันดับไหน "ยืนยันสิทธิ์" เพื่อรับที่นั่ง</div></div>
+      <div class="tli"><div class="dot"></div><div class="date">27 พ.ค. 70</div><div class="ev">ประกาศผลรอบ 3 ครั้งที่ 2</div><div class="sub">ที่ว่างจากคนสละสิทธิ์จะถูกประมวลผลให้คนอันดับถัดไป</div></div>
+      <div class="tli"><div class="dot"></div><div class="date">29 พ.ค.–15 มิ.ย. 70</div><div class="ev">รอบ 4 Direct Admission (แผนสำรองถ้ายังไม่ติด)</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 05 PROBLEMS ===== -->
+<section class="mod" id="problems">
+  <div class="wrap">
+    <div class="mod-head">
+      <div class="mod-no">05</div>
+      <div>
+        <h2>ตัวอย่างโจทย์ + เฉลย</h2>
+        <p>ชุดโจทย์ฝึกครอบวิชาในรูปแบบ A (คณิต 1 · ชีววิทยา · สังคม · ไทย · อังกฤษ) บวก TGAT2 หนึ่งข้อ กดปุ่ม "ดูเฉลย" เพื่อเปิดวิธีคิดทีละสเตป — เป็นโจทย์เขียนใหม่ตามแนวบลูพรินต์จริง ใช้ซ้อมมือก่อนไปตะลุยข้อสอบเก่าในลิงก์ท้ายหน้า</p>
+      </div>
+    </div>
+    <div id="qlist"></div>
+  </div>
+</section>
+
+<!-- ===== 06 PREP ===== -->
+<section class="mod" id="prep">
+  <div class="wrap">
+    <div class="mod-head">
+      <div class="mod-no">06</div>
+      <div>
+        <h2>เช็กลิสต์ + แผนการอ่าน DEK70</h2>
+        <p>กดที่ช่องเพื่อทำเครื่องหมายว่าทำแล้ว (รีเซ็ตเมื่อรีโหลดหน้า) ด้านล่างมีไทม์ไลน์อ่านหนังสือรายเดือนและเอกสารที่ต้องเตรียมตอนสมัคร</p>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div>
+        <h3 style="font-size:16px;margin-bottom:12px;font-family:var(--display);color:var(--gold)">ทำตอนนี้ (มิ.ย.–ก.ค. 69)</h3>
+        <ul class="ck" id="ck1">
+          <li><span class="box">✓</span><span class="txt">ลงทะเบียน myTCAS ให้เรียบร้อย<small>เปิดระบบ 15 ก.ค. 69</small></span></li>
+          <li><span class="box">✓</span><span class="txt">รักษา GPAX ให้ ≥ 2.75 ทุกเทอม<small>ทุกรูปแบบบังคับ — เกรดต่ำกว่านี้ถูกตัดสิทธิ์</small></span></li>
+          <li><span class="box">✓</span><span class="txt">วางแผนวิชา A-Level 5 ตัว (รูปแบบ A)<small>คณิต1 · ชีววิทยา · สังคม · ไทย · อังกฤษ</small></span></li>
+          <li><span class="box">✓</span><span class="txt">เริ่มเก็บ ชีววิทยา + คณิต 1 เป็นหลัก (จุดแข็งสายวิทย์)</span></li>
+          <li><span class="box">✓</span><span class="txt">ตั้งตารางฝึกอังกฤษ (ช่วยทั้ง A-Level อังกฤษ และ TGAT1)</span></li>
+          <li><span class="box">✓</span><span class="txt">โหลดข้อสอบเก่า A-Level ทุกวิชาที่ใช้ มาดูแนว</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="font-size:16px;margin-bottom:12px;font-family:var(--display);color:var(--gold)">เอกสารที่ต้องเตรียมตอนสมัครรอบ 3</h3>
+        <ul class="docs card" style="padding:18px">
+          <li>เลขบัตรประชาชน + บัญชี myTCAS (สมัครผ่าน mytcas.com)</li>
+          <li>ใบ ปพ.1 / GPAX 6 ภาคเรียน (ต้องถึง 2.75 — ขอจากโรงเรียนล่วงหน้า)</li>
+          <li>คะแนน TGAT, A-Level — อยู่ในระบบ ทปอ. อัตโนมัติ ไม่ต้องอัปโหลดเอง</li>
+          <li>เงินค่าสมัครส่วนที่เกินสิทธิ์ฟรี (ถ้ายื่นเกิน 7 อันดับ)</li>
+          <li>เช็กประกาศปีล่าสุดของ มธ. ว่ามีสอบสัมภาษณ์/ตรวจร่างกายหรือไม่</li>
+        </ul>
+        <div class="pin-insight" style="margin-top:14px">
+          <div class="ic">⚠️</div>
+          <div>จุดพลาดยอดฮิต: ลืม "ยืนยันสิทธิ์" หลังประกาศผล ถ้าไม่กดยืนยันในเวลาที่กำหนด = เสียสิทธิ์ที่นั่งนั้นไป</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:17px;margin:34px 0 8px;font-family:var(--display)">ไทม์ไลน์อ่านหนังสือ ตลอดปี</h3>
+    <div class="card">
+      <div class="plan-row"><div class="plan-when">มิ.ย.–ก.ย. 69</div><div class="plan-what">ปูพื้น 5 วิชา A-Level ทีละสาระ โดยทุ่ม <b>ชีววิทยา + คณิต 1</b> ก่อน (จุดแข็ง) ควบคู่เก็บเกรดให้ถึง GPAX 2.75 • เริ่มฝึกอังกฤษทุกวัน</div></div>
+      <div class="plan-row"><div class="plan-when">ต.ค.–ธ.ค. 69</div><div class="plan-what">เก็บ สังคม + ไทย ให้ครบทุกสาระ + เร่งฝึก TGAT แบบจับเวลา (เผื่อรูปแบบ B) • สมัครสอบ TGAT (4–10 พ.ย.) แล้วพิมพ์บัตรสอบ</div></div>
+      <div class="plan-row"><div class="plan-when">ม.ค. 70</div><div class="plan-what">โหมดสอบจริงรอบแรก: ตะลุยข้อสอบ TGAT เต็มชุดจับเวลา → <b>30 ม.ค. สอบ TGAT</b> • สมัครสอบ A-Level (14–20 ม.ค.)</div></div>
+      <div class="plan-row"><div class="plan-when">ก.พ.–มี.ค. 70</div><div class="plan-what">ซ้อมทำข้อสอบเก่า A-Level ครบทั้ง 5 วิชา จับเวลาเหมือนจริง โดยเฉพาะซ้อม "วันมาราธอน 3 วิชา" → <b>13–14 มี.ค. สอบ A-Level</b></div></div>
+      <div class="plan-row"><div class="plan-when">เม.ย.–พ.ค. 70</div><div class="plan-what">เอาคะแนนจริงมาคำนวณทั้งรูปแบบ A และ B + ศึกษาการจัดอันดับ → <b>7–11 พ.ค. ยื่นสมัคร</b> → ยืนยันสิทธิ์</div></div>
+    </div>
+    <p class="section-note">เคล็ดลับจัดอันดับ 10 ช่อง: วางคณะ/มหาลัยที่ "อยากได้ที่สุด" ไว้อันดับบนสุดเสมอ (ระบบให้สิทธิ์อันดับสูงสุดที่คะแนนถึงก่อน) แล้วไล่ลงมาเป็นตัวสำรองที่คะแนนเข้าถึงง่ายขึ้น — จิตวิทยา มธ. แข่งสูง ควรมีอันดับสำรองที่ปลอดภัยกว่ารองรับด้วย</p>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="wrap">
+    <span class="eyebrow">Resources // ลิงก์ทางการ</span>
+    <div class="links">
+      <a href="https://course.mytcas.com/programs/10050206113101A" target="_blank" rel="noopener">หน้าโปรแกรมจิตวิทยา มธ. บน mytcas<span>เกณฑ์/สัดส่วนคะแนนปีล่าสุด (อัปเดตที่นี่)</span></a>
+      <a href="https://www.psy.arts.tu.ac.th/?lang=th" target="_blank" rel="noopener">ภาควิชาจิตวิทยา ศิลปศาสตร์ มธ.<span>รายละเอียดหลักสูตร/ข่าวรับสมัคร</span></a>
+      <a href="https://arts.tu.ac.th/tcas" target="_blank" rel="noopener">งานรับเข้า คณะศิลปศาสตร์ มธ.<span>สรุปเกณฑ์ TCAS แต่ละรอบ (ดาวน์โหลด)</span></a>
+      <a href="https://www.mytcas.com/" target="_blank" rel="noopener">mytcas.com<span>ระบบสมัคร TCAS + ข่าวทางการ</span></a>
+      <a href="https://www.mytcas.com/blueprint/a-level-66-bio/" target="_blank" rel="noopener">Blueprint A-Level ชีววิทยา<span>โครงสร้าง + ตัวอย่างข้อสอบทางการ</span></a>
+      <a href="https://www.mytcas.com/blueprint/a-level-81-thai/" target="_blank" rel="noopener">Blueprint A-Level ภาษาไทย<span>โครงสร้าง + ตัวอย่างข้อสอบทางการ</span></a>
+    </div>
+    <div class="disclaimer">
+      <b>หมายเหตุสำคัญ:</b> สัดส่วนคะแนน คุณสมบัติ และจำนวนรับ อ้างอิงเกณฑ์รอบ 3 Admission ของ <b>TCAS69</b> (ข้อมูลล่าสุดที่ประกาศ) ส่วนปฏิทินและตารางสอบอ้างอิงกำหนดการ <b>TCAS70</b> อย่างเป็นทางการจาก ทปอ. — เกณฑ์ของ TCAS70 มักประกาศช่วงปลายปี 2569 และมักใกล้เคียงเดิม แต่อาจเปลี่ยนแปลงได้ (เช่น สัดส่วน วิชาที่ใช้ หรือคะแนนขั้นต่ำ) ก่อนสมัครจริงให้ยืนยันตัวเลขล่าสุดจากหน้าโปรแกรมบน mytcas และระเบียบการฉบับเต็มของ มธ. อีกครั้งเสมอ
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---------- COUNTDOWN to A-Level day 1: 13 Mar 2027 08:30 (+07:00) ---------- */
+(function(){
+  var target = new Date('2027-03-13T08:30:00+07:00').getTime();
+  function tick(){
+    var now = Date.now();
+    var d = Math.max(0, Math.ceil((target-now)/86400000));
+    document.getElementById('cd-days').textContent = d.toLocaleString('th-TH');
+  }
+  tick(); setInterval(tick, 3600000);
+})();
+
+/* ---------- SCORE CALCULATOR (3 formats) ---------- */
+var fmt = 'alvl5';
+function setFmt(f){
+  fmt = f;
+  document.querySelectorAll('.fmt-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.f===f); });
+  document.querySelectorAll('.fmt-inputs').forEach(function(g){ g.classList.toggle('active', g.dataset.g===f); });
+  calc();
+}
+document.querySelectorAll('.fmt-btn').forEach(function(b){
+  b.addEventListener('click', function(){ setFmt(b.dataset.f); });
+});
+
+function setVal(id, v){ var e=document.getElementById(id); if(e) e.textContent=v; }
+
+function calc(){
+  var tg = +document.getElementById('i_target').value;
+  setVal('v_target', tg);
+  var s = 0;
+  if(fmt==='alvl5'){
+    var a=+a_math.value,b=+a_bio.value,c=+a_soc.value,d=+a_thai.value,e=+a_eng.value;
+    setVal('a_math_v',a); setVal('a_bio_v',b); setVal('a_soc_v',c); setVal('a_thai_v',d); setVal('a_eng_v',e);
+    s = (a+b+c+d+e)/5;            /* แต่ละวิชา 20% เท่ากัน = เฉลี่ย */
+  } else if(fmt==='tgat'){
+    var t1=+g_t1.value,t2=+g_t2.value,t3=+g_t3.value;
+    setVal('g_t1_v',t1); setVal('g_t2_v',t2); setVal('g_t3_v',t3);
+    s = (t1+t2+t3)/3;            /* TGAT 3 พาร์ตเฉลี่ย */
+  } else {
+    var so=+b_soc.value,th=+b_thai.value,en=+b_eng.value,el=+b_el.value;
+    setVal('b_soc_v',so); setVal('b_thai_v',th); setVal('b_eng_v',en); setVal('b_el_v',el);
+    s = (so+th+en+el)/4;        /* แต่ละวิชา 25% เท่ากัน = เฉลี่ย */
+  }
+  var el2=document.getElementById('g_score');
+  el2.textContent = s.toFixed(2);
+  document.getElementById('g_fill').style.width = s + '%';
+  document.getElementById('g_tmark').style.left = tg + '%';
+  el2.className='score ' + (s>=tg ? 's-hi' : (s>=tg-7 ? 's-mid' : 's-low'));
+  var v=document.getElementById('g_verdict');
+  if(s>=tg){ v.textContent='✅ ถึงเป้าแล้ว (+'+(s-tg).toFixed(2)+') ลุยต่อ!'; v.style.color='var(--green)'; }
+  else if(s>=tg-7){ v.textContent='⚡ ใกล้แล้ว ขาดอีก '+(tg-s).toFixed(2)+' คะแนน'; v.style.color='var(--gold)'; }
+  else { v.textContent='🔴 ยังห่างเป้า '+(tg-s).toFixed(2)+' คะแนน ดันวิชาที่ถนัดให้สูงขึ้น'; v.style.color='var(--red)'; }
+}
+
+/* ---------- EXAM TABS ---------- */
+document.querySelectorAll('.tab').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
+    document.querySelectorAll('.tabpanel').forEach(function(x){x.classList.remove('active');});
+    b.classList.add('active');
+    document.querySelector('.tabpanel[data-p="'+b.dataset.t+'"]').classList.add('active');
+  });
+});
+
+/* ---------- CHECKLIST ---------- */
+document.querySelectorAll('.ck li').forEach(function(li){
+  li.addEventListener('click',function(){li.classList.toggle('done');});
+});
+
+/* ---------- SAMPLE PROBLEMS ---------- */
+var problems = [
+  {topic:'คณิต 1 · เซต',
+   q:'ชมรมจิตวิทยามีสมาชิก 40 คน ชอบอ่านการ์ตูน 25 คน ชอบดูอนิเมะ 18 คน และชอบทั้งสองอย่าง 10 คน จงหาจำนวนสมาชิกที่ไม่ชอบทั้งสองอย่าง',
+   c:['5 คน','7 คน','12 คน','15 คน','17 คน'],
+   ans:'ข้อ 2) 7 คน',
+   work:['ให้ K = ชอบการ์ตูน, A = ชอบอนิเมะ',
+         'n(K ∪ A) = n(K) + n(A) − n(K ∩ A) = 25 + 18 − 10 = 33',
+         'ไม่ชอบทั้งสอง = 40 − 33 = 7 คน']},
+  {topic:'คณิต 1 · สถิติ',
+   q:'คะแนนแบบทดสอบของนักเรียน 5 คน คือ 3, 5, 7, 9, 11 จงหาส่วนเบี่ยงเบนมาตรฐานของประชากร',
+   c:['√6','2√2','2√5','3','√10'],
+   ans:'ข้อ 2) 2√2 (≈ 2.83)',
+   work:['ค่าเฉลี่ย x̄ = (3+5+7+9+11)/5 = 35/5 = 7',
+         'ส่วนเบี่ยงเบนจากค่าเฉลี่ย: −4, −2, 0, 2, 4 → ยกกำลังสอง: 16, 4, 0, 4, 16',
+         'ความแปรปรวน σ² = (16+4+0+4+16)/5 = 40/5 = 8',
+         'σ = √8 = 2√2 ≈ 2.83']},
+  {topic:'คณิต 1 · ความน่าจะเป็น',
+   q:'ทอยลูกเต๋ายุติธรรม 1 ลูก 1 ครั้ง ความน่าจะเป็นที่ได้แต้มมากกว่า 4 เท่ากับเท่าใด',
+   c:['1/6','1/3','1/2','2/3','5/6'],
+   ans:'ข้อ 2) 1/3',
+   work:['แต้มที่มากกว่า 4 คือ 5 และ 6 → มี 2 เหตุการณ์',
+         'ผลลัพธ์ทั้งหมดของลูกเต๋า = 6',
+         'ความน่าจะเป็น = 2/6 = 1/3']},
+  {topic:'ชีววิทยา · ระบบประสาท',
+   q:'ส่วนของเซลล์ประสาท (neuron) ที่ทำหน้าที่ "รับ" สัญญาณประสาทเข้าสู่ตัวเซลล์ คือข้อใด',
+   c:['แอกซอน (axon)','เดนไดรต์ (dendrite)','ปลอกไมอีลิน (myelin sheath)','ปุ่มปลายแอกซอน (axon terminal)','โหนดของแรนเวียร์ (node of Ranvier)'],
+   ans:'ข้อ 2) เดนไดรต์ (dendrite)',
+   work:['เดนไดรต์ = แขนงสั้น ๆ ที่ยื่นจากตัวเซลล์ ทำหน้าที่รับกระแสประสาทเข้าสู่ตัวเซลล์',
+         'แอกซอน = ส่งกระแสประสาทออกจากตัวเซลล์ไปยังเซลล์ถัดไป',
+         'ปลอกไมอีลินช่วยเพิ่มความเร็วการนำกระแส, axon terminal คือปลายส่งสัญญาณ → ตอบ เดนไดรต์']},
+  {topic:'ชีววิทยา · พันธุศาสตร์',
+   q:'ผสมพ่อแม่ที่มีจีโนไทป์ Aa × Aa (A เด่นข่ม a) โอกาสที่ลูกจะแสดงลักษณะด้อย (aa) เป็นเท่าใด',
+   c:['0','1/4','1/2','3/4','1'],
+   ans:'ข้อ 2) 1/4',
+   work:['ตาราง Punnett: Aa × Aa → AA : Aa : Aa : aa',
+         'อัตราส่วนจีโนไทป์ = 1 AA : 2 Aa : 1 aa',
+         'ลักษณะด้อย aa เกิดได้ 1 ใน 4 ช่อง → โอกาส = 1/4']},
+  {topic:'สังคมศึกษา · เศรษฐศาสตร์',
+   q:'การที่ธนาคารกลาง (ธนาคารแห่งประเทศไทย) "ปรับขึ้นอัตราดอกเบี้ยนโยบาย" เพื่อชะลอเงินเฟ้อ จัดเป็นเครื่องมือของนโยบายใด',
+   c:['นโยบายการคลัง (Fiscal Policy)','นโยบายการเงิน (Monetary Policy)','นโยบายการค้าระหว่างประเทศ','นโยบายรายได้','นโยบายประชานิยม'],
+   ans:'ข้อ 2) นโยบายการเงิน (Monetary Policy)',
+   work:['นโยบายการเงิน = ดูแลโดยธนาคารกลาง ใช้เครื่องมือเช่น อัตราดอกเบี้ยนโยบาย ปริมาณเงิน',
+         'นโยบายการคลัง = ดูแลโดยรัฐบาล ใช้การเก็บภาษีและการใช้จ่ายภาครัฐ',
+         'ดอกเบี้ยนโยบายเป็นเครื่องมือของธนาคารกลาง → เป็นนโยบายการเงิน']},
+  {topic:'สังคมศึกษา · หน้าที่พลเมือง',
+   q:'ตามรัฐธรรมนูญไทย ผู้มีสิทธิเลือกตั้งสมาชิกสภาผู้แทนราษฎรต้องมีอายุเท่าใดในวันเลือกตั้ง',
+   c:['ไม่ต่ำกว่า 15 ปีบริบูรณ์','ไม่ต่ำกว่า 17 ปีบริบูรณ์','ไม่ต่ำกว่า 18 ปีบริบูรณ์','ไม่ต่ำกว่า 20 ปีบริบูรณ์','ไม่ต่ำกว่า 21 ปีบริบูรณ์'],
+   ans:'ข้อ 3) ไม่ต่ำกว่า 18 ปีบริบูรณ์',
+   work:['รัฐธรรมนูญกำหนดคุณสมบัติผู้มีสิทธิเลือกตั้ง: มีสัญชาติไทย และมีอายุไม่ต่ำกว่า 18 ปีในวันเลือกตั้ง',
+         '(ส่วนผู้สมัครรับเลือกตั้ง ส.ส. ต้องอายุไม่ต่ำกว่า 25 ปี ซึ่งคนละเรื่องกัน)',
+         'ตอบ 18 ปีบริบูรณ์']},
+  {topic:'ภาษาไทย · หลักภาษา',
+   q:'คำที่ขีดเส้นใต้ในประโยค "เธออยากไปเที่ยว แต่ฝนตกหนัก" — คำว่า "แต่" เป็นคำชนิดใด',
+   c:['คำบุพบท','คำสันธาน','คำวิเศษณ์','คำอุทาน','คำสรรพนาม'],
+   ans:'ข้อ 2) คำสันธาน',
+   work:['คำสันธาน = คำเชื่อมประโยค/ข้อความเข้าด้วยกัน เช่น และ แต่ หรือ เพราะ ดังนั้น',
+         '"แต่" เชื่อมความที่ขัดแย้งกันสองความเข้าด้วยกัน → เป็นคำสันธาน',
+         '(คำบุพบทเช่น ใน บน ของ ; คำวิเศษณ์ขยายคำอื่น) → ตอบ คำสันธาน']},
+  {topic:'ภาษาไทย · การอ่านเชิงวิเคราะห์',
+   q:'"แม้เส้นทางจะยาวไกลและเหนื่อยล้า แต่ทุกก้าวที่เดินต่อ ล้วนพาเราเข้าใกล้ฝันมากขึ้น" — ข้อความนี้มีเจตนาหลักเพื่อสิ่งใด',
+   c:['อธิบายวิธีเดินทาง','ปลุกใจให้มุ่งมั่นไม่ยอมแพ้','เล่าเหตุการณ์ในอดีต','ขอความช่วยเหลือ','บรรยายความสวยงามของธรรมชาติ'],
+   ans:'ข้อ 2) ปลุกใจให้มุ่งมั่นไม่ยอมแพ้',
+   work:['คำสำคัญ: "ทุกก้าวที่เดินต่อ...เข้าใกล้ฝันมากขึ้น" สื่อการให้กำลังใจ',
+         'ไม่ได้อธิบายวิธีการ (ข้อ 1) หรือเล่าอดีต (ข้อ 3) และ "เส้นทาง/ก้าวเดิน" เป็นการเปรียบเทียบ ไม่ใช่บรรยายธรรมชาติจริง (ข้อ 5)',
+         'แก่นคือสร้างแรงบันดาลใจให้สู้ต่อ → ปลุกใจให้มุ่งมั่นไม่ยอมแพ้']},
+  {topic:'ภาษาอังกฤษ · Grammar',
+   q:'Choose the best option: "She studied very hard ____ she could pass the entrance exam."',
+   c:['because','so that','although','despite','unless'],
+   ans:'ข้อ 2) so that',
+   work:['ช่องว่างต้องการคำเชื่อมที่บอก "วัตถุประสงค์" (เรียนหนักเพื่อที่จะสอบผ่าน)',
+         '"so that + ประโยค" = เพื่อที่จะ... ใช้บอกจุดประสงค์ได้ถูกต้อง',
+         'because = เพราะ (เหตุผล), although/despite = แม้ว่า (ขัดแย้ง), unless = เว้นแต่ → ตอบ so that']},
+  {topic:'TGAT2 · การคิดอย่างมีเหตุผล',
+   q:'จงหาตัวเลขถัดไปของลำดับ: 2, 6, 12, 20, 30, ?',
+   c:['36','40','42','44','48'],
+   ans:'ข้อ 3) 42',
+   work:['ดูผลต่างระหว่างพจน์: 6−2=4, 12−6=6, 20−12=8, 30−20=10',
+         'ผลต่างเพิ่มทีละ 2 (4, 6, 8, 10, ...) → ผลต่างถัดไป = 12',
+         'พจน์ถัดไป = 30 + 12 = 42  (สังเกตว่าแต่ละพจน์ = n(n+1): 1·2, 2·3, 3·4, ... , 6·7 = 42)']}
+];
+
+(function(){
+  var html='';
+  problems.forEach(function(p,i){
+    var choices = p.c.map(function(ch,j){
+      return '<li data-c="'+String.fromCharCode(49+j)+'">'+ch+'</li>';
+    }).join('');
+    var work = p.work.map(function(w){return '<div class="step"><span class="math">'+w+'</span></div>';}).join('');
+    html += '<div class="q">'
+      + '<div class="q-top" onclick="toggleSol('+i+')">'
+        + '<span class="q-no">'+(i+1)+'</span>'
+        + '<div class="q-body"><div class="q-topic">'+p.topic+'</div>'
+          + '<div class="q-text math">'+p.q+'</div>'
+          + '<ul class="q-choices">'+choices+'</ul></div>'
+        + '<button class="q-toggle" type="button">ดูเฉลย</button>'
+      + '</div>'
+      + '<div class="q-sol" id="sol'+i+'">'
+        + '<div class="ans"><b>เฉลย:</b> '+p.ans+'</div>'
+        + '<div class="work">'+work+'</div>'
+      + '</div></div>';
+  });
+  document.getElementById('qlist').innerHTML = html;
+})();
+
+function toggleSol(i){
+  var el=document.getElementById('sol'+i);
+  el.classList.toggle('open');
+  var btn=el.previousElementSibling.querySelector('.q-toggle');
+  btn.textContent = el.classList.contains('open') ? 'ซ่อนเฉลย' : 'ดูเฉลย';
+}
+
+calc();
+</script>
+</body>
+</html>
