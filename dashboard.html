@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dashboard · TCAS70</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tracker.css">
+<style>
+  html,body{margin:0;background:var(--tc-ink);min-height:100%}
+  *{box-sizing:border-box}
+</style>
+</head>
+<body>
+<div class="tcas-dash">
+  <a class="tcas-back" href="index.html">← กลับหน้า Hub</a>
+  <h1 class="tcas-h">ความก้าวหน้าของฉัน</h1>
+  <p class="tcas-sub" id="updated">—</p>
+
+  <div id="root"></div>
+
+  <div class="tcas-tools">
+    <button class="tcas-tool" id="btnExport">⬇️ Export (สำรอง)</button>
+    <button class="tcas-tool" id="btnImport">⬆️ Import (กู้คืน)</button>
+    <button class="tcas-tool danger" id="btnReset">🗑️ ล้างข้อมูล</button>
+  </div>
+  <input type="file" id="fileImport" accept="application/json,.json" hidden>
+  <a id="dlAnchor" hidden></a>
+</div>
+
+<script defer src="tracker.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  var T = window.TCAS;
+  var root = document.getElementById('root');
+
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]; }); }
+
+  function relTime(ts){
+    if(!ts) return '—';
+    var d = Math.floor((Date.now()-ts)/86400000);
+    if(d<=0) return 'วันนี้';
+    if(d===1) return 'เมื่อวาน';
+    return d + ' วันก่อน';
+  }
+
+  function render(){
+    var s = T.deriveStats();
+    var up = s.updatedAt ? new Date(s.updatedAt) : null;
+    document.getElementById('updated').textContent =
+      'อัปเดตล่าสุด ' + (up ? up.toLocaleString('th-TH') : '—');
+
+    if(!s.guides.length){
+      root.innerHTML = '<div class="tcas-empty">ยังไม่มีข้อมูล<br>' +
+        'เปิดหน้า guide สักวิชา (เช่น <b>CS / จิตวิทยา / นิติ</b>) แล้วลองกด ' +
+        '<b>ดูเฉลย → ได้ / ไม่ได้</b> สักข้อ<br>แล้วกลับมาที่นี่ ระบบจะสรุปให้อัตโนมัติ</div>';
+      return;
+    }
+
+    var html = '';
+
+    // ---- สรุปรวม ----
+    html += '<div class="tcas-sum">' +
+      '<div class="tcas-sumcard"><div class="n green">'+s.totals.pct+'%</div><div class="l">เข้าใจรวม</div></div>' +
+      '<div class="tcas-sumcard"><div class="n gold">'+s.totals.attempted+'</div><div class="l">ทำไปแล้ว (ข้อ)</div></div>' +
+      '<div class="tcas-sumcard"><div class="n '+(s.dueCount?'red':'')+'">'+s.dueCount+'</div><div class="l">ถึงเวลาทวน</div></div>' +
+      '</div>';
+
+    // ---- คิวทวน (spaced repetition) ----
+    if(s.dueCount){
+      html += '<div class="tcas-card due"><div class="tcas-card-title">⏰ ถึงเวลาทวนแล้ว ('+s.dueCount+' ข้อ)</div>';
+      s.dueQueue.slice(0,12).forEach(function(d){
+        var tag = d.overdue>0 ? ('เลย '+d.overdue+' วัน') : 'วันนี้';
+        html += '<div class="tcas-due-item">' +
+          '<a href="'+esc(d.url)+'#problems"><span>'+esc(d.preview)+'…</span>' +
+          '<span class="src">'+esc(d.guideTitle)+' · '+esc(d.topic)+'</span></a>' +
+          '<span class="tag">'+tag+'</span></div>';
+      });
+      if(s.dueQueue.length>12) html += '<div class="tcas-meta" style="margin-top:10px">และอีก '+(s.dueQueue.length-12)+' ข้อ…</div>';
+      html += '</div>';
+    }
+
+    // ---- รายวิชา + รายบท ----
+    s.guides.forEach(function(g){
+      html += '<div class="tcas-card">' +
+        '<div class="tcas-card-h"><a href="'+esc(g.url)+'">'+esc(g.title)+'</a>' +
+        '<span class="tcas-pct">'+g.pct+'%</span></div>' +
+        '<div class="tcas-meta">แม่น '+g.mastered+'/'+g.total+' ข้อ · ทำไปแล้ว '+g.attempted+' ข้อ' +
+        (g.total-g.attempted>0 ? ' · ยังไม่เริ่ม '+(g.total-g.attempted) : '') + '</div>' +
+        '<div class="tcas-bar"><div class="tcas-fill" style="width:'+g.pct+'%"></div></div>';
+
+      g.chapters.forEach(function(c){
+        var flags = '';
+        if(c.weak)  flags += '<span class="flag weak">พลาดบ่อย '+(c.acc!=null?c.acc+'%':'')+'</span>';
+        if(c.stale) flags += '<span class="flag stale">ไม่ทวน '+c.staleDays+' วัน</span>';
+        html += '<div class="tcas-chap">' +
+          '<div class="tcas-chap-name">'+esc(c.topic)+flags+'</div>' +
+          '<div class="tcas-chap-bar"><i style="width:'+c.pct+'%"></i></div>' +
+          '<div class="tcas-chap-pct">'+c.pct+'%</div></div>';
+      });
+      html += '</div>';
+    });
+
+    root.innerHTML = html;
+  }
+
+  // ---- export / import / reset ----
+  document.getElementById('btnExport').addEventListener('click', function(){
+    var blob = new Blob([T.Store.exportJSON()], {type:'application/json'});
+    var a = document.getElementById('dlAnchor');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'tcas70-progress-' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1500);
+  });
+  document.getElementById('btnImport').addEventListener('click', function(){
+    document.getElementById('fileImport').click();
+  });
+  document.getElementById('fileImport').addEventListener('change', function(e){
+    var f = e.target.files[0]; if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      try { T.Store.importJSON(r.result); render(); alert('กู้คืนข้อมูลสำเร็จ ✓'); }
+      catch(err){ alert('ไฟล์ไม่ถูกต้อง: ' + err.message); }
+    };
+    r.readAsText(f);
+    e.target.value = '';
+  });
+  document.getElementById('btnReset').addEventListener('click', function(){
+    if(confirm('ล้างข้อมูลความก้าวหน้าทั้งหมด? (กู้คืนไม่ได้ถ้าไม่ได้ Export ไว้)')){
+      T.Store.reset(); render();
+    }
+  });
+
+  render();
+});
+</script>
+</body>
+</html>

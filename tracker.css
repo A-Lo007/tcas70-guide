@@ -1,0 +1,90 @@
+/* ============================================================
+   TCAS70 Progress Tracker — shared styles
+   ใช้ร่วมกัน: UI ที่ฉีดเข้า guide + หน้า dashboard
+   palette สะท้อนจาก guide เดิม (prefix --tc-* กันชนกับ var ของหน้า)
+   ============================================================ */
+:root{
+  --tc-ink:#0A0D13; --tc-panel:#11161F; --tc-text:#E7ECF3; --tc-muted:#93A0B4;
+  --tc-line:#232C3B; --tc-line-soft:#1A222F;
+  --tc-gold:#FFC93C; --tc-green:#4ADE80; --tc-red:#FF4D4F;
+  --tc-green-dim:rgba(74,222,128,.14); --tc-red-dim:rgba(255,77,79,.14); --tc-gold-dim:rgba(255,201,60,.12);
+  --tc-display:'Chakra Petch',system-ui,sans-serif; --tc-body:'Sarabun',system-ui,sans-serif;
+}
+
+/* ---------- per-page progress bar (ฉีดบนหน้า guide) ---------- */
+.tcas-pagebar{font-family:var(--tc-body);background:var(--tc-panel);border:1px solid var(--tc-line);border-radius:14px;padding:14px 16px;margin:0 0 18px}
+.tcas-pb-row{display:flex;justify-content:space-between;align-items:baseline}
+.tcas-pb-label{font-family:var(--tc-display);font-size:13px;font-weight:600;color:var(--tc-text);letter-spacing:.3px}
+.tcas-pb-val{font-family:var(--tc-display);font-size:20px;font-weight:700;color:var(--tc-green)}
+.tcas-pb-track{height:8px;background:var(--tc-line-soft);border-radius:99px;overflow:hidden;margin:8px 0}
+.tcas-pb-fill{height:100%;background:linear-gradient(90deg,var(--tc-gold),var(--tc-green));border-radius:99px;transition:width .35s ease}
+.tcas-pb-sub{font-size:12.5px;color:var(--tc-muted);display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.tcas-pb-link{color:var(--tc-gold);text-decoration:none;font-weight:600;white-space:nowrap}
+
+/* ---------- status chip บนแต่ละข้อ (prepend ใน .q-topic) ---------- */
+.tcas-chip{display:inline-block;font-family:var(--tc-body);font-size:10.5px;font-weight:700;line-height:1;padding:3px 7px;border-radius:99px;margin-right:8px;vertical-align:middle;letter-spacing:.2px}
+.tcas-chip.tcas-new{background:var(--tc-line);color:var(--tc-muted)}
+.tcas-chip.tcas-ok{background:var(--tc-gold-dim);color:var(--tc-gold)}
+.tcas-chip.tcas-mastered{background:var(--tc-green-dim);color:var(--tc-green)}
+.tcas-chip.tcas-miss{background:var(--tc-red-dim);color:var(--tc-red)}
+
+/* ---------- self-grade buttons (ฉีดใน .q-sol → โผล่หลังกดดูเฉลย) ---------- */
+.tcas-grade{margin-top:14px;padding-top:14px;border-top:1px dashed var(--tc-line)}
+.tcas-grade-q{display:block;font-family:var(--tc-display);font-size:12.5px;color:var(--tc-muted);margin-bottom:9px}
+.tcas-grade-btns{display:flex;gap:10px}
+.tcas-btn{flex:1;min-height:46px;font-family:var(--tc-display);font-size:15px;font-weight:600;border-radius:11px;border:1px solid var(--tc-line);background:transparent;cursor:pointer;transition:transform .12s ease,opacity .12s ease;-webkit-tap-highlight-color:transparent}
+.tcas-btn.tcas-yes{color:var(--tc-green);border-color:rgba(74,222,128,.4)}
+.tcas-btn.tcas-no{color:var(--tc-red);border-color:rgba(255,77,79,.4)}
+.tcas-btn:active{transform:scale(.97)}
+.tcas-grade.tcas-graded .tcas-btn{opacity:.42}
+.tcas-grade.tcas-graded[data-result="ok"] .tcas-yes{opacity:1;background:var(--tc-green-dim)}
+.tcas-grade.tcas-graded[data-result="no"] .tcas-no{opacity:1;background:var(--tc-red-dim)}
+.tcas-grade-done{font-family:var(--tc-body);font-size:11.5px;color:var(--tc-muted);margin-top:8px;display:none}
+.tcas-grade.tcas-graded .tcas-grade-done{display:block}
+
+/* ---------- dashboard ---------- */
+.tcas-dash{font-family:var(--tc-body);color:var(--tc-text);max-width:680px;margin:0 auto;padding:18px 16px 64px}
+.tcas-back{display:inline-block;color:var(--tc-gold);text-decoration:none;font-size:13px;font-weight:600;margin-bottom:10px}
+.tcas-h{font-family:var(--tc-display);font-weight:700;font-size:22px;margin:4px 0}
+.tcas-sub{color:var(--tc-muted);font-size:13px;margin-bottom:18px}
+
+.tcas-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.tcas-sumcard{background:var(--tc-panel);border:1px solid var(--tc-line);border-radius:14px;padding:13px 10px;text-align:center}
+.tcas-sumcard .n{font-family:var(--tc-display);font-weight:700;font-size:23px}
+.tcas-sumcard .n.green{color:var(--tc-green)} .tcas-sumcard .n.gold{color:var(--tc-gold)} .tcas-sumcard .n.red{color:var(--tc-red)}
+.tcas-sumcard .l{font-size:11px;color:var(--tc-muted);margin-top:3px}
+
+.tcas-card{background:var(--tc-panel);border:1px solid var(--tc-line);border-radius:16px;padding:16px;margin-bottom:14px}
+.tcas-card.due{border-color:rgba(255,77,79,.35)}
+.tcas-card-title{font-family:var(--tc-display);font-weight:700;font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.tcas-card-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.tcas-card-h a{color:var(--tc-text);text-decoration:none;font-family:var(--tc-display);font-weight:700;font-size:16px}
+.tcas-pct{font-family:var(--tc-display);font-weight:700;font-size:18px;color:var(--tc-green)}
+.tcas-meta{font-size:12px;color:var(--tc-muted);margin:4px 0 12px}
+.tcas-bar{height:7px;background:var(--tc-line-soft);border-radius:99px;overflow:hidden;margin-bottom:10px}
+.tcas-fill{height:100%;background:linear-gradient(90deg,var(--tc-gold),var(--tc-green));border-radius:99px;transition:width .4s ease}
+
+.tcas-chap{display:flex;align-items:center;gap:10px;padding:7px 0}
+.tcas-chap-name{flex:1;font-size:13px;min-width:0}
+.tcas-chap-name .flag{font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:99px;margin-left:6px;vertical-align:middle;white-space:nowrap}
+.flag.weak{background:var(--tc-red-dim);color:var(--tc-red)}
+.flag.stale{background:var(--tc-gold-dim);color:var(--tc-gold)}
+.tcas-chap-bar{width:80px;height:6px;background:var(--tc-line-soft);border-radius:99px;overflow:hidden;flex:none}
+.tcas-chap-bar i{display:block;height:100%;background:var(--tc-green);border-radius:99px}
+.tcas-chap-pct{width:36px;text-align:right;font-size:12px;color:var(--tc-muted);flex:none}
+
+.tcas-due-item{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--tc-line-soft)}
+.tcas-due-item:first-child{border-top:none}
+.tcas-due-item a{color:var(--tc-text);text-decoration:none;font-size:13px;flex:1;min-width:0}
+.tcas-due-item .src{display:block;font-size:11px;color:var(--tc-muted);margin-top:2px}
+.tcas-due-item .tag{font-size:10px;color:var(--tc-red);font-weight:700;flex:none}
+
+.tcas-tools{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.tcas-tool{flex:1;min-width:130px;min-height:46px;font-family:var(--tc-display);font-weight:600;font-size:13px;border-radius:11px;border:1px solid var(--tc-line);background:var(--tc-panel);color:var(--tc-text);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tcas-tool:active{transform:scale(.98)}
+.tcas-tool.danger{color:var(--tc-red);border-color:rgba(255,77,79,.35)}
+
+.tcas-empty{background:var(--tc-panel);border:1px dashed var(--tc-line);border-radius:16px;padding:28px 18px;text-align:center;color:var(--tc-muted);font-size:14px;line-height:1.8}
+.tcas-empty b{color:var(--tc-text)}
+
+@media(min-width:560px){ .tcas-sum{gap:14px} .tcas-dash{padding-top:26px} }
