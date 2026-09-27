@@ -120,6 +120,18 @@
   .tli .ev{font-size:14.5px;margin-top:2px}
   .tli .sub{font-size:12.5px;color:var(--muted);margin-top:2px}
 
+  /* practice sets */
+  .drill{display:flex;align-items:center;gap:20px;position:relative;overflow:hidden;background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:24px 22px 22px;color:var(--text);transition:.18s}
+  .drill::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--gold),transparent)}
+  .drill:hover{transform:translateY(-4px);border-color:var(--muted-line);text-decoration:none}
+  .drill .fac{font-family:var(--display);font-size:11px;letter-spacing:.6px;color:var(--muted);text-transform:uppercase;font-weight:600}
+  .drill h3{font-size:22px;margin:7px 0 4px;color:var(--gold)}
+  .drill p{font-size:14px;color:#cdd6e3}
+  .drill .mini{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .drill .mini span{font-family:var(--display);font-size:11.5px;font-weight:600;background:var(--panel-3);border:1px solid var(--line);border-radius:7px;padding:4px 9px;color:#cdd6e3}
+  .drill .go{flex:none;margin-left:auto;display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:700;font-size:14px;padding:13px 18px;border-radius:11px;background:var(--gold);color:var(--ink)}
+  .drill .go .arr{font-size:18px}
+
   footer{border-top:1px solid var(--line);padding:40px 0 60px;margin-top:24px}
   .links{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:18px 0}
   .links a{display:block;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:13px 15px;color:var(--text);font-size:14px;transition:.15s}
@@ -132,6 +144,8 @@
   @media(max-width:820px){
     .progs{grid-template-columns:1fr}
     .ov{grid-template-columns:1fr}
+    .drill{flex-direction:column;align-items:stretch}
+    .drill .go{margin-left:0;justify-content:space-between}
     nav.hud-nav{display:none}
   }
 </style>
@@ -148,6 +162,7 @@
       <a href="#compare">ตารางเทียบ</a>
       <a href="#overlap">วางแผนอ่าน</a>
       <a href="#timeline">ปฏิทินรวม</a>
+      <a href="#practice">ข้อสอบฝึก</a>
     </nav>
   </div>
 </header>
@@ -317,6 +332,29 @@
       <div class="ic">🎯</div>
       <div>เคล็ดลับจัดอันดับ 10 ช่อง: วางคณะที่ "อยากได้ที่สุด" ไว้บนสุดเสมอ (ระบบให้สิทธิ์อันดับสูงสุดที่คะแนนถึงก่อน) ไล่ลงมาเป็นตัวสำรองที่เข้าง่ายขึ้น — มี 3 คณะนี้เป็นฐาน แล้วเสริมอันดับสำรองที่ปลอดภัยเพิ่ม</div>
     </div>
+  </div>
+</section>
+
+<!-- ===== PRACTICE ===== -->
+<section class="mod" id="practice">
+  <div class="wrap">
+    <div class="mod-head">
+      <div class="mod-no">05</div>
+      <div>
+        <h2>ห้องซ้อมสอบ</h2>
+        <p>ข้อสอบฝึกที่ทำได้ในเบราว์เซอร์ ตรวจคะแนนให้ทันทีพร้อมเฉลย ส่งลิงก์ให้เพื่อนทำได้เลย คำตอบของแต่ละคนเก็บไว้ในเครื่องตัวเอง</p>
+      </div>
+    </div>
+
+    <a class="drill" href="thai-final-exam.html">
+      <div>
+        <div class="fac">ภาษาไทย ม.6 · ปลายภาค ภาคเรียนที่ 1</div>
+        <h3>ข้อสอบปลายภาค (ฝึกทำ)</h3>
+        <p>สามก๊ก ตอน กวนอูไปรับราชการกับโจโฉ · กาพย์เห่เรือ · แนว TGAT2 ด้านภาษาและเหตุผล</p>
+        <div class="mini"><span>40 ข้อ</span><span>โหมดสอบ / โหมดฝึก</span><span>เฉลยพร้อมเหตุผล</span><span>สรุปก่อนสอบ</span></div>
+      </div>
+      <div class="go">เริ่มทำ <span class="arr">→</span></div>
+    </a>
   </div>
 </section>
 
